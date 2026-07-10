@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Plan Search — Redesign Concept</title>
+
+<!-- Same stack as the live app -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --brand-green:#51BF9D;
+    --brand-green-dark:#005D63;
+    --grey:#666D89;
+    --ink:#13384B;
+    --blue:#1B75BC;
+    --orange:#F68C3D;
+    --carmine:#DA2E72;
+    --line:#e6eaec;
+    --page:#f4f6f7;
+    --soft-green:rgba(81,191,157,.10);
+  }
+  body{
+    font-family:'Prompt',sans-serif;
+    color:var(--ink);
+    background:var(--page);
+    margin:0;
+    display:flex;flex-direction:column;min-height:100vh;
+  }
+  h1,h2,h3,h4,h5,h6{font-weight:600;color:var(--ink);}
+
+  /* ── concept ribbon (not part of the real app) ── */
+  .concept-bar{
+    background:var(--ink);color:#fff;font-size:.82rem;
+    padding:.5rem 1rem;display:flex;align-items:center;gap:.6rem;justify-content:center;
+  }
+  .concept-bar .badge{background:var(--brand-green);font-weight:600;}
+
+  /* ── modern app navbar (scalable, grouped dropdowns, mobile collapse) ── */
+  .cpm-navbar{background:var(--ink);padding:.45rem 0;}
+  .cpm-navbar .navbar-brand{padding:0;margin-right:1.4rem;display:flex;align-items:center;}
+  .cpm-navbar .navbar-toggler{border:1px solid rgba(255,255,255,.25);color:#fff;padding:.35rem .6rem;}
+  .cpm-navbar .navbar-toggler:focus{box-shadow:none;}
+  .cpm-navbar .nav-link{color:rgba(255,255,255,.85)!important;font-weight:500;font-size:.92rem;padding:.5rem .8rem!important;border-radius:8px;display:flex;align-items:center;}
+  .cpm-navbar .nav-link:hover{color:#fff!important;background:rgba(255,255,255,.08);}
+  .cpm-navbar .nav-link.active{color:#fff!important;background:rgba(81,191,157,.20);}
+  .cpm-navbar .dropdown-toggle::after{margin-left:.45rem;opacity:.55;}
+  .cpm-dropdown{border:1px solid var(--line);border-radius:10px;padding:.35rem;box-shadow:0 12px 32px rgba(19,56,75,.18);min-width:224px;margin-top:.4rem;}
+  .cpm-dropdown .dropdown-item{border-radius:7px;padding:.5rem .7rem;display:flex;align-items:center;gap:.65rem;color:var(--ink);font-size:.9rem;}
+  .cpm-dropdown .dropdown-item i{color:var(--brand-green-dark);width:18px;text-align:center;}
+  .cpm-dropdown .dropdown-item:hover{background:var(--soft-green);color:var(--brand-green-dark);}
+  .cpm-dropdown .dropdown-item.active,.cpm-dropdown .dropdown-item:active{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-navbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--brand-green);color:#fff;display:grid;place-items:center;font-size:.74rem;font-weight:700;flex:none;}
+  @media (max-width:991.98px){
+    .cpm-navbar .navbar-collapse{background:rgba(255,255,255,.04);margin-top:.5rem;padding:.5rem;border-radius:10px;}
+    .cpm-dropdown{background:rgba(255,255,255,.05);box-shadow:none;border:none;margin:.15rem 0 .15rem .6rem;}
+    .cpm-dropdown .dropdown-item{color:rgba(255,255,255,.85);}
+    .cpm-dropdown .dropdown-item i{color:var(--brand-green);}
+    .cpm-dropdown .dropdown-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+  }
+
+  /* ── page header ── */
+  .page-head{
+    display:flex;align-items:center;gap:.85rem;
+    padding:1.4rem 0 1.1rem;
+  }
+  .page-head .icon{
+    width:46px;height:46px;border-radius:12px;flex:none;
+    background:var(--soft-green);color:var(--brand-green-dark);
+    display:grid;place-items:center;font-size:1.25rem;
+  }
+  .page-head h1{font-size:1.5rem;margin:0;line-height:1.1;}
+  .page-head p{margin:0;color:var(--grey);font-size:.92rem;}
+
+  /* ── cards ── */
+  .panel{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 1px 2px rgba(19,56,75,.04);
+  }
+  .panel + .panel{margin-top:1rem;}
+
+  .form-label{font-weight:500;color:var(--ink);font-size:.82rem;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.02em;}
+  .form-control,.form-select{border-color:var(--line);border-radius:9px;padding:.5rem .75rem;font-size:.92rem;}
+  .form-control:focus,.form-select:focus{border-color:var(--brand-green);box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+
+  /* ── modern omni-search ── */
+  .search-row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;}
+  .omni{position:relative;flex:1 1 380px;min-width:240px;}
+  .omni-ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--grey);font-size:.95rem;pointer-events:none;}
+  .omni-input{width:100%;height:46px;border:1px solid var(--line);border-radius:11px;padding:0 42px;font-size:1rem;font-family:'Prompt',sans-serif;color:var(--ink);background:#fff;}
+  .omni-input::placeholder{color:#9aa4a9;}
+  .omni-input:focus{outline:none;border-color:var(--brand-green);box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+  .omni-clear{position:absolute;right:11px;top:50%;transform:translateY(-50%);border:none;background:#eef1f2;color:var(--grey);width:24px;height:24px;border-radius:50%;cursor:pointer;line-height:1;font-size:1rem;display:grid;place-items:center;}
+  .omni-clear:hover{background:#dfe4e6;color:var(--ink);}
+  .filters-btn{height:46px;display:inline-flex;align-items:center;}
+  .filter-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--brand-green);color:#fff;font-size:.7rem;font-weight:700;margin-left:.4rem;}
+  .search-btn{height:46px;display:inline-flex;align-items:center;justify-content:center;}
+  .filters-menu{padding:1rem;min-width:300px;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(19,56,75,.14);}
+  .fm-field{margin-bottom:.85rem;}
+  .fm-actions{display:flex;justify-content:space-between;gap:.5rem;margin-top:.2rem;}
+  .branch-checks{display:flex;flex-direction:column;gap:.4rem;}
+  .bcheck{display:flex;align-items:center;gap:.55rem;font-size:.9rem;font-weight:500;color:var(--ink);cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:.45rem .65rem;}
+  .bcheck:hover{background:#f8fbfa;}
+  .bcheck input{width:18px;height:18px;accent-color:var(--brand-green);cursor:pointer;}
+  .bcheck:has(input:checked){background:var(--soft-green);border-color:var(--brand-green);color:var(--brand-green-dark);}
+
+  .chips-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;}
+  .chips-row:empty{display:none;}
+  .chip{display:inline-flex;align-items:center;gap:.45rem;background:var(--soft-green);color:var(--brand-green-dark);border:1px solid rgba(81,191,157,.35);border-radius:20px;padding:.25rem .35rem .25rem .7rem;font-size:.82rem;font-weight:500;}
+  .chip .k{opacity:.7;}
+  .chip b{font-weight:600;}
+  .chip .x{border:none;background:rgba(0,93,99,.12);color:var(--brand-green-dark);cursor:pointer;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;line-height:1;}
+  .chip .x:hover{background:var(--brand-green);color:#fff;}
+  .chips-clear{align-self:center;background:none;border:none;color:var(--grey);font-size:.8rem;cursor:pointer;text-decoration:underline;}
+  .chips-clear:hover{color:var(--ink);}
+
+  /* ── buttons ── */
+  .btn{border-radius:9px;font-weight:500;}
+  .btn-brand{background:var(--brand-green);border-color:var(--brand-green);color:#fff;}
+  .btn-brand:hover{background:var(--brand-green-dark);border-color:var(--brand-green-dark);color:#fff;}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{background:#f2f5f6;color:var(--ink);}
+  .btn-danger-soft{background:#fff;border:1px solid rgba(218,46,114,.4);color:var(--carmine);}
+  .btn-danger-soft:hover{background:var(--carmine);border-color:var(--carmine);color:#fff;}
+  .btn-danger-soft:disabled{color:#b9c0c4;border-color:var(--line);background:#fff;}
+
+  .toolbar-divider{width:1px;align-self:stretch;background:var(--line);margin:0 .15rem;}
+
+  /* ── results table ── */
+  .results-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:.85rem 1.1rem;border-bottom:1px solid var(--line);
+  }
+  .results-head .count{font-weight:600;font-size:.95rem;}
+  .results-head .count span{color:var(--grey);font-weight:400;}
+
+  table.cpm{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem;}
+  table.cpm thead th{
+    background:#fbfcfc;color:var(--ink);font-weight:600;font-size:.78rem;
+    text-transform:uppercase;letter-spacing:.03em;
+    padding:.7rem .8rem;border-bottom:1px solid var(--line);white-space:nowrap;
+    position:sticky;top:0;z-index:2;
+  }
+  table.cpm thead th .sort{color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:.35rem;}
+  table.cpm thead th .sort i{color:#b7c0c4;font-size:.7rem;}
+  table.cpm thead th .sort:hover i{color:var(--brand-green-dark);}
+  table.cpm tbody td{padding:.7rem .8rem;border-bottom:1px solid var(--line);vertical-align:middle;}
+  table.cpm tbody tr:hover{background:#f8fbfa;}
+  table.cpm tbody tr.selected{background:var(--soft-green);}
+
+  .client-name{font-weight:600;color:var(--brand-green-dark);text-decoration:none;}
+  .client-name:hover{color:var(--brand-green-dark);text-decoration:underline;}
+  .client-id{color:var(--grey);font-variant-numeric:tabular-nums;}
+  .muted{color:var(--grey);}
+  .branch-tag{
+    display:inline-block;background:#eef1f2;color:var(--grey);
+    border-radius:6px;padding:.1rem .5rem;font-size:.8rem;font-weight:500;
+  }
+
+  /* profile pill next to name */
+  .profile-link{
+    display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;
+    background:var(--ink);color:#fff;font-size:.66rem;font-weight:600;text-decoration:none;flex:none;
+  }
+  .profile-link:hover{background:var(--brand-green-dark);color:#fff;}
+
+  /* approval status */
+  .pill{display:inline-flex;align-items:center;gap:.35rem;border-radius:20px;padding:.18rem .6rem;font-size:.78rem;font-weight:600;white-space:nowrap;}
+  .pill-approved{background:var(--soft-green);color:var(--brand-green-dark);}
+  .pill-pending{background:rgba(246,140,61,.14);color:#b6650f;}
+
+  /* document cell: status chip + actions */
+  .doc-cell{white-space:nowrap;}
+  .doc-row{display:flex;align-items:center;gap:.4rem;}
+  .status-chip{
+    display:inline-flex;align-items:center;gap:.35rem;border-radius:8px;
+    padding:.28rem .55rem;font-size:.8rem;font-weight:600;text-decoration:none;border:1px solid transparent;
+  }
+  .status-chip.has{background:var(--soft-green);color:var(--brand-green-dark);border-color:rgba(81,191,157,.35);}
+  .status-chip.has:hover{background:var(--brand-green);color:#fff;}
+  .status-chip.empty{background:#f3f5f6;color:#9aa4a9;cursor:default;}
+  .icon-btn{
+    width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--grey);
+    display:grid;place-items:center;flex:none;
+  }
+  .icon-btn:hover{border-color:var(--brand-green);color:var(--brand-green-dark);background:var(--soft-green);}
+  .doc-date{font-size:.74rem;color:var(--grey);margin-top:.25rem;}
+
+  /* assessment launch group */
+  .assess-launch{display:flex;align-items:center;gap:.3rem;margin-top:.45rem;}
+  .assess-launch .lbl{font-size:.68rem;color:#9aa4a9;text-transform:uppercase;letter-spacing:.04em;margin-right:.1rem;}
+  .launch-pill{
+    display:inline-grid;place-items:center;min-width:26px;height:22px;padding:0 .35rem;border-radius:6px;
+    background:#fff;border:1px solid var(--line);color:var(--brand-green-dark);
+    font-size:.7rem;font-weight:600;text-decoration:none;
+  }
+  .launch-pill:hover{background:var(--brand-green);border-color:var(--brand-green);color:#fff;}
+
+  /* NEW: compact inline "+" assessment launcher (sits beside the chip, no extra row) */
+  .add-assessment-btn{
+    width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--brand-green-dark);
+    display:grid;place-items:center;flex:none;cursor:pointer;font-size:.95rem;line-height:1;padding:0;
+  }
+  .add-assessment-btn:hover,.add-assessment-btn[aria-expanded="true"]{background:var(--soft-green);border-color:var(--brand-green);}
+  .assess-menu{
+    --bs-dropdown-min-width:230px;border:1px solid var(--line);border-radius:10px;padding:.35rem;
+    box-shadow:0 8px 24px rgba(19,56,75,.12);font-size:.86rem;
+  }
+  .assess-menu .dropdown-header{font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#9aa4a9;padding:.3rem .6rem;}
+  .assess-menu .dropdown-item{border-radius:7px;padding:.45rem .6rem;display:flex;align-items:center;gap:.6rem;color:var(--ink);}
+  .assess-menu .dropdown-item:hover{background:var(--soft-green);color:var(--brand-green-dark);}
+  .assess-menu .dropdown-item .tag{display:inline-grid;place-items:center;min-width:26px;height:20px;border-radius:5px;background:#eef1f2;color:var(--grey);font-size:.66rem;font-weight:700;}
+  .assess-menu .dropdown-item:hover .tag{background:var(--brand-green);color:#fff;}
+
+  .form-check-input:checked{background-color:var(--brand-green);border-color:var(--brand-green);}
+  .form-check-input:focus{border-color:var(--brand-green);box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:1rem;padding:.7rem 1.1rem;border-top:1px solid var(--line);font-size:.78rem;color:var(--grey);}
+  .legend b{color:var(--ink);font-weight:600;}
+
+  .pagination .page-link{color:var(--ink);border-color:var(--line);}
+  .pagination .page-item.active .page-link{background:var(--brand-green);border-color:var(--brand-green);}
+  .pagination .page-link:focus{box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+
+  .tooltip-inner{background:var(--ink);font-family:'Prompt',sans-serif;}
+  .tooltip.bs-tooltip-top .tooltip-arrow::before{border-top-color:var(--ink);}
+
+  /* ── modern footer ── */
+  .site-footer{
+    background:var(--ink);
+    color:rgba(255,255,255,.7);
+    border-top:3px solid var(--brand-green);
+    margin-top:auto;
+  }
+  .site-footer .footer-brand img{height:64px;width:auto;}
+  .site-footer .footer-inner{
+    display:flex;flex-wrap:wrap;gap:2.5rem 3rem;justify-content:space-between;
+    padding:2.6rem 0 2rem;
+  }
+  .footer-brand{max-width:300px;}
+  .footer-brand .logo{display:flex;align-items:center;gap:.6rem;color:#fff;font-weight:600;font-size:1.2rem;text-decoration:none;}
+  .footer-brand .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--brand-green);display:grid;place-items:center;color:#fff;font-size:1rem;}
+  .footer-brand .logo .light{font-weight:300;opacity:.7;font-size:.85rem;}
+  .footer-brand p{margin:.9rem 0 0;font-size:.86rem;line-height:1.5;color:rgba(255,255,255,.6);}
+
+  .footer-col h6{
+    color:#fff;font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+    margin:0 0 1rem;
+  }
+  .footer-links{display:flex;flex-direction:column;gap:.7rem;}
+  .footer-links a{
+    color:rgba(255,255,255,.7);text-decoration:none;font-size:.88rem;
+    display:inline-flex;align-items:center;gap:.55rem;transition:color .15s ease;width:fit-content;
+  }
+  .footer-links a i{color:var(--brand-green);font-size:.82rem;width:16px;text-align:center;}
+  .footer-links a:hover{color:#fff;}
+
+  .footer-bar{
+    border-top:1px solid rgba(255,255,255,.1);
+    display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:center;justify-content:space-between;
+    padding:1.1rem 0;font-size:.82rem;color:rgba(255,255,255,.55);
+  }
+  .footer-bar .ver{display:inline-flex;align-items:center;gap:.5rem;}
+  .footer-bar .ver .chip{
+    background:rgba(81,191,157,.16);color:#7fd9c0;border-radius:6px;
+    padding:.12rem .5rem;font-weight:600;font-size:.76rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- App nav (context) -->
+<nav class="navbar navbar-expand-lg cpm-navbar">
+  <div class="container-xxl">
+    <a class="navbar-brand" href="#"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou Care Plan Manager" style="height:46px;width:auto;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpmNav" aria-controls="cpmNav" aria-expanded="false" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
+    <div class="collapse navbar-collapse" id="cpmNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-users me-2"></i>Clients</a>
+          <ul class="dropdown-menu cpm-dropdown">
+            <li><a class="dropdown-item" href="onboarding_V3.html"><i class="fas fa-user-plus"></i> Add New Client</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-folder-open"></i> Care Plan Manager</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="report_pages_V3.html"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="settings_V3.html"><i class="fas fa-gear me-2"></i>Settings</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="avatar me-2">GO</span> Ger O'Keeffe</a>
+          <ul class="dropdown-menu dropdown-menu-end cpm-dropdown">
+            <li><a class="dropdown-item" href="user_profile_V3.html"><i class="fas fa-id-badge"></i> My Profile &amp; Access</a></li>
+            <li><a class="dropdown-item" href="release_notes_V3.html"><i class="fas fa-bullhorn"></i> Release Notes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xxl pb-5">
+
+  <!-- Page header -->
+  <div class="page-head">
+    <div class="icon"><i class="fas fa-search"></i></div>
+    <div>
+      <h1>Care Plan Manager</h1>
+      <p>Search and manage care plan records</p>
+    </div>
+  </div>
+
+  <!-- Search / filter panel -->
+  <div class="panel p-3 p-lg-3">
+    <form method="GET" id="searchForm">
+      <!-- hidden fields the backend reads (populated by the smart search box) -->
+      <input type="hidden" name="search_name" id="search_name">
+      <input type="hidden" name="search_id" id="search_id">
+
+      <div class="search-row">
+        <div class="omni">
+          <i class="fas fa-search omni-ic"></i>
+          <input type="text" id="omniSearch" class="omni-input" placeholder="Search by client name or ID…" autocomplete="off">
+          <button type="button" id="omniClear" class="omni-clear" title="Clear" hidden>&times;</button>
+        </div>
+
+        <div class="dropdown">
+          <button type="button" class="btn btn-ghost filters-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+            <i class="fas fa-sliders-h me-1"></i> Filters <span class="filter-badge" id="filterBadge" hidden>0</span>
+          </button>
+          <div class="dropdown-menu filters-menu">
+            <div class="fm-field">
+              <label class="form-label" for="search_assessor">Assessor</label>
+              <select class="form-select" id="search_assessor" name="search_assessor">
+                <option value="">All Assessors</option>
+                <option>Ger O'Keeffe</option><option>Katie O'Keeffe</option><option>Liam Doyle</option>
+              </select>
+            </div>
+            <div class="fm-field">
+              <label class="form-label">Branch</label>
+              <div id="branchChecks" class="branch-checks">
+                <label class="bcheck"><input type="checkbox" name="search_branch" value="Tullamore"> Tullamore</label>
+                <label class="bcheck"><input type="checkbox" name="search_branch" value="Athlone"> Athlone</label>
+                <label class="bcheck"><input type="checkbox" name="search_branch" value="Mullingar"> Mullingar</label>
+              </div>
+            </div>
+            <div class="fm-field">
+              <label class="form-label" for="date_filter">Time Period</label>
+              <select class="form-select" id="date_filter" name="date_filter">
+                <option value="today">Today</option>
+                <option value="month" selected>Last 30 Days</option>
+                <option value="last90">Last 90 Days</option>
+                <option value="max">Max</option>
+              </select>
+            </div>
+            <div class="fm-actions">
+              <button type="button" class="btn btn-ghost btn-sm" id="resetFilters">Reset filters</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-brand search-btn"><i class="fas fa-search me-1"></i> Search</button>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-ghost" data-bs-toggle="tooltip" title="Export current results to Excel"><i class="fas fa-download me-1"></i> Export</button>
+          <button type="button" class="btn btn-ghost" data-bs-toggle="tooltip" title="Import clients from Excel"><i class="fas fa-upload me-1"></i> Import</button>
+          <div class="toolbar-divider"></div>
+          <button type="button" class="btn btn-danger-soft" id="bulkDeleteBtn" disabled>
+            <i class="fas fa-trash me-1"></i> Delete (<span id="selectedCount">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- active filter chips -->
+      <div class="chips-row" id="chipsRow"></div>
+    </form>
+  </div>
+
+  <!-- Results -->
+  <div class="panel mt-3">
+    <div class="results-head">
+      <div class="count" id="resultCount">11 clients <span>found</span></div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="cpm">
+        <thead>
+          <tr>
+            <th style="width:42px;"><input type="checkbox" class="form-check-input" id="selectAll"></th>
+            <th><a class="sort" href="#">Client Name <i class="fas fa-sort"></i></a></th>
+            <th><a class="sort" href="#">Client ID <i class="fas fa-sort"></i></a></th>
+            <th><a class="sort" href="#">DOB <i class="fas fa-sort"></i></a></th>
+            <th><a class="sort" href="#">Branch <i class="fas fa-sort"></i></a></th>
+            <th><a class="sort" href="#">CP Approved <i class="fas fa-sort"></i></a></th>
+            <th>Assessments</th>
+            <th>Care Plan</th>
+            <th>Support Docs</th>
+          </tr>
+        </thead>
+        <tbody id="clientRows"><!-- rows injected --></tbody>
+      </table>
+    </div>
+
+    <div class="legend">
+      <span>Click a <b>client name</b> to open their profile · Use <b>+</b> in the Assessments column to start an assessment</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer (canonical — consistent across all pages) -->
+<footer class="site-footer">
+  <div class="container-xxl">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou">
+        <p>Transforming Care Plan Management for Healthcare Excellence</p>
+      </div>
+      <div class="footer-col">
+        <h6>Legal</h6>
+        <div class="footer-links">
+          <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+          <a href="#"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</a>
+          <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+          <a href="#"><i class="fas fa-building"></i> Company Information</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>&copy; 2026 Allwayswithyou. All rights reserved.</span>
+      <span class="ver">Care Plan Manager <span class="chip">v2.4.1</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ── sample data (server-rendered loop in the real template) ──
+  const clients = [
+    {id:1, name:"Colm Bracken", code:"75433", dob:"16/12/1937", branch:"Tullamore", approved:null,
+      assess:{n:2,date:"04/03/2026"}, plan:{n:1,date:"06/03/2026"}, support:{n:0}},
+    {id:2, name:"Sarah Murphy", code:"75414", dob:"01/05/1940", branch:"Tullamore", approved:null,
+      assess:{n:0}, plan:{n:0}, support:{n:0}},
+    {id:3, name:"Margaret Finlay", code:"75412", dob:"25/04/1937", branch:"Tullamore", approved:"22/06/2026",
+      assess:{n:2,date:"18/06/2026"}, plan:{n:1,date:"22/06/2026"}, support:{n:0}},
+    {id:4, name:"Mary Ralph", code:"75389", dob:"17/02/1938", branch:"Athlone", approved:null,
+      assess:{n:1,date:"29/05/2026"}, plan:{n:0}, support:{n:1,date:"30/05/2026"}},
+    {id:5, name:"Patrick Nolan", code:"75377", dob:"03/11/1945", branch:"Athlone", approved:"11/06/2026",
+      assess:{n:3,date:"01/06/2026"}, plan:{n:2,date:"11/06/2026"}, support:{n:2,date:"12/06/2026"}},
+    {id:6, name:"Eileen Brennan", code:"75361", dob:"22/08/1942", branch:"Mullingar", approved:null,
+      assess:{n:1,date:"20/05/2026"}, plan:{n:1,date:"24/05/2026"}, support:{n:0}},
+    {id:7, name:"Thomas Kearns", code:"75344", dob:"09/01/1936", branch:"Mullingar", approved:"02/05/2026",
+      assess:{n:2,date:"21/04/2026"}, plan:{n:1,date:"02/05/2026"}, support:{n:1,date:"03/05/2026"}},
+    {id:8, name:"Bridget Walsh", code:"75330", dob:"30/07/1939", branch:"Tullamore", approved:null,
+      assess:{n:0}, plan:{n:0}, support:{n:0}},
+  ];
+
+  const docCell = (d, kind, viewLabel) => {
+    const title = viewLabel || ('View ' + kind);
+    const chip = d.n > 0
+      ? `<a href="#" class="status-chip has" data-bs-toggle="tooltip" title="${title}"><i class="fas fa-file"></i> ${d.n} file${d.n>1?'s':''}</a>`
+      : `<span class="status-chip empty">None</span>`;
+    return `<td class="doc-cell">
+      <div class="doc-row">${chip}</div></td>`;
+  };
+
+  const approvalCell = (a) => a
+    ? `<span class="pill pill-approved"><i class="fas fa-check-circle"></i> ${a}</span>`
+    : `<span class="pill pill-pending"><i class="fas fa-clock"></i> Pending</span>`;
+
+  function rowHtml(c){
+    return `<tr data-client-id="${c.id}" data-name="${c.name.toLowerCase()}" data-code="${c.code}" data-branch="${c.branch}">
+      <td><input type="checkbox" class="form-check-input client-checkbox" value="${c.id}"></td>
+      <td>
+        <a href="client_profile_V3.html" class="client-name">${c.name}</a>
+      </td>
+      <td class="client-id">${c.code}</td>
+      <td class="muted">${c.dob}</td>
+      <td><span class="branch-tag">${c.branch}</span></td>
+      <td>${approvalCell(c.approved)}</td>
+      <td class="doc-cell">
+        <div class="doc-row">
+          <div class="dropdown">
+            <button class="add-assessment-btn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Start an assessment"><i class="fas fa-plus"></i></button>
+            <ul class="dropdown-menu assess-menu">
+              <li><h6 class="dropdown-header">Start an assessment</h6></li>
+              <li><a class="dropdown-item" href="assessment_pages_V3.html#sa"><span class="tag">SA</span> Self-Assessment</a></li>
+              <li><a class="dropdown-item" href="assessment_pages_V3.html#ha"><span class="tag">HA</span> Home Assessment</a></li>
+              <li><a class="dropdown-item" href="assessment_pages_V3.html#ra"><span class="tag">RA</span> Reassessment</a></li>
+            </ul>
+          </div>
+          ${c.assess.n>0
+            ? `<a href="#" class="status-chip has" data-bs-toggle="tooltip" title="View assessments"><i class="fas fa-file"></i> ${c.assess.n} file${c.assess.n>1?'s':''}</a>`
+            : `<span class="status-chip empty">None</span>`}
+        </div>
+      </td>
+      ${docCell(c.plan,'care plan','View care plan & approvals', 'client_profile_V3.html#careplan')}
+      ${docCell(c.support,'support document')}
+    </tr>`;
+  }
+
+  const tbody = document.getElementById('clientRows');
+  tbody.innerHTML = clients.map(rowHtml).join('');
+
+  let tips = [];
+  function initTips(){
+    tips.forEach(t=>t.dispose());
+    tips = [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(el=>new bootstrap.Tooltip(el));
+  }
+  initTips();
+
+  // selection
+  const selectAll = document.getElementById('selectAll');
+  const bulkBtn = document.getElementById('bulkDeleteBtn');
+  const countEl = document.getElementById('selectedCount');
+  function refresh(){
+    const boxes = [...document.querySelectorAll('.client-checkbox')];
+    const checked = boxes.filter(b=>b.checked);
+    countEl.textContent = checked.length;
+    bulkBtn.disabled = checked.length===0;
+    boxes.forEach(b=>b.closest('tr').classList.toggle('selected', b.checked));
+    selectAll.indeterminate = checked.length>0 && checked.length<boxes.length;
+    selectAll.checked = checked.length===boxes.length && boxes.length>0;
+  }
+  selectAll.addEventListener('change', e=>{
+    document.querySelectorAll('.client-checkbox').forEach(b=>b.checked=e.target.checked);
+    refresh();
+  });
+  tbody.addEventListener('change', e=>{ if(e.target.classList.contains('client-checkbox')) refresh(); });
+
+  // ── modern omni-search: route text→name, digits→id; chips + filter badge ──
+  const omni = document.getElementById('omniSearch');
+  const omniClear = document.getElementById('omniClear');
+  const fName = document.getElementById('search_name');
+  const fId = document.getElementById('search_id');
+  const fAssessor = document.getElementById('search_assessor');
+  const branchChecks = document.getElementById('branchChecks');
+  const getBranches = () => [...branchChecks.querySelectorAll('input:checked')].map(c=>c.value);
+  const clearBranches = () => branchChecks.querySelectorAll('input:checked').forEach(c=>c.checked=false);
+  const fDate = document.getElementById('date_filter');
+  const chipsRow = document.getElementById('chipsRow');
+  const filterBadge = document.getElementById('filterBadge');
+  const dateLabels = {today:'Today', month:'Last 30 Days', last90:'Last 90 Days', max:'Max'};
+
+  function routeOmni(){
+    const q = omni.value.trim();
+    if (/^\d+$/.test(q)){ fId.value = q; fName.value = ''; }
+    else { fName.value = q; fId.value = ''; }
+    omniClear.hidden = q.length === 0;
+  }
+
+  function activeFilters(){
+    const list = [];
+    if (fAssessor.value) list.push({key:'Assessor', val:fAssessor.value, reset:()=>fAssessor.value=''});
+    getBranches().forEach(b=>list.push({key:'Branch', val:b, reset:()=>{ const c=[...branchChecks.querySelectorAll('input')].find(x=>x.value===b); if(c) c.checked=false; }}));
+    if (fDate.value && fDate.value !== 'month') list.push({key:'Period', val:dateLabels[fDate.value]||fDate.value, reset:()=>fDate.value='month'});
+    return list;
+  }
+
+  function renderChips(){
+    const list = activeFilters();
+    filterBadge.hidden = list.length === 0;
+    filterBadge.textContent = list.length;
+    chipsRow.innerHTML = '';
+    list.forEach(f=>{
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = `<span class="k">${f.key}:</span> <b>${f.val}</b> <button type="button" class="x" title="Remove">&times;</button>`;
+      chip.querySelector('.x').addEventListener('click', ()=>{ f.reset(); renderChips(); applyFilter(); });
+      chipsRow.appendChild(chip);
+    });
+    if (list.length){
+      const clr = document.createElement('button');
+      clr.type = 'button'; clr.className = 'chips-clear'; clr.textContent = 'Clear all';
+      clr.addEventListener('click', ()=>{ fAssessor.value=''; clearBranches(); fDate.value='month'; renderChips(); applyFilter(); });
+      chipsRow.appendChild(clr);
+    }
+  }
+
+  // demo instant filter on name + id (sample data)
+  function applyFilter(){
+    routeOmni();
+    const n = fName.value.trim().toLowerCase();
+    const id = fId.value.trim();
+    const branches = getBranches();
+    let shown=0;
+    document.querySelectorAll('#clientRows tr').forEach(tr=>{
+      const ok = (!n || tr.dataset.name.includes(n))
+              && (!id || tr.dataset.code.includes(id))
+              && (branches.length === 0 || branches.includes(tr.dataset.branch));
+      tr.style.display = ok ? '' : 'none';
+      if(ok) shown++;
+    });
+    document.getElementById('resultCount').innerHTML = `${shown} client${shown!==1?'s':''} <span>found</span>`;
+  }
+
+  omni.addEventListener('input', applyFilter);
+  omniClear.addEventListener('click', ()=>{ omni.value=''; applyFilter(); omni.focus(); });
+  [fAssessor, fDate].forEach(el=>el.addEventListener('change', ()=>{ renderChips(); applyFilter(); }));
+  branchChecks.addEventListener('change', ()=>{ renderChips(); applyFilter(); });
+  document.getElementById('resetFilters').addEventListener('click', ()=>{ fAssessor.value=''; clearBranches(); fDate.value='month'; renderChips(); applyFilter(); });
+  document.getElementById('searchForm').addEventListener('submit', e=>{ e.preventDefault(); applyFilter(); });
+  renderChips();
+</script>
+</body>
+</html>

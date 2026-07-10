@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports — Redesign</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B; --line:#e6eaec; --page:#f4f6f7; --soft-green:rgba(81,191,157,.10); --blue:#1B75BC; --orange:#F68C3D; --carmine:#DA2E72; --purple:#6950A1; }
+  *{box-sizing:border-box;}
+  body{ font-family:'Prompt',sans-serif; color:var(--ink); background:var(--page); margin:0; display:flex; flex-direction:column; min-height:100vh; }
+  h1,h2,h3,h4,h5,h6{ font-weight:600; color:var(--ink); }
+
+  /* navbar */
+  .cpm-navbar{ background:var(--ink); padding:.45rem 0; position:relative; z-index:1030; }
+  .cpm-navbar .navbar-brand{ padding:0; margin-right:1.4rem; display:flex; align-items:center; }
+  .cpm-navbar .navbar-toggler{ border:1px solid rgba(255,255,255,.25); color:#fff; padding:.35rem .6rem; }
+  .cpm-navbar .navbar-toggler:focus{ box-shadow:none; }
+  .cpm-navbar .nav-link{ color:rgba(255,255,255,.85)!important; font-weight:500; font-size:.92rem; padding:.5rem .8rem!important; border-radius:8px; display:flex; align-items:center; }
+  .cpm-navbar .nav-link:hover{ color:#fff!important; background:rgba(255,255,255,.08); }
+  .cpm-navbar .nav-link.active{ color:#fff!important; background:rgba(81,191,157,.20); }
+  .cpm-navbar .dropdown-toggle::after{ margin-left:.45rem; opacity:.55; }
+  .cpm-dropdown{ border:1px solid var(--line); border-radius:10px; padding:.35rem; box-shadow:0 12px 32px rgba(19,56,75,.18); min-width:224px; margin-top:.4rem; }
+  .cpm-dropdown .dropdown-item{ border-radius:7px; padding:.5rem .7rem; display:flex; align-items:center; gap:.65rem; color:var(--ink); font-size:.9rem; }
+  .cpm-dropdown .dropdown-item i{ color:var(--brand-green-dark); width:18px; text-align:center; }
+  .cpm-dropdown .dropdown-item:hover{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-dropdown .dropdown-item.active,.cpm-dropdown .dropdown-item:active{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-navbar .avatar{ width:30px; height:30px; border-radius:50%; background:var(--brand-green); color:#fff; display:grid; place-items:center; font-size:.74rem; font-weight:700; flex:none; }
+
+  .page-head{ display:flex; align-items:center; gap:.85rem; padding:1.3rem 0 1rem; }
+  .page-head .icon{ width:48px; height:48px; border-radius:12px; flex:none; background:var(--soft-green); color:var(--brand-green-dark); display:grid; place-items:center; font-size:1.25rem; }
+  .page-head h1{ font-size:1.5rem; margin:0; line-height:1.1; }
+  .page-head p{ margin:0; color:var(--grey); font-size:.92rem; }
+
+  /* report switcher (demo only — 3 separate pages in production) */
+  .rswitch{ display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .rswitch button{ font-family:'Prompt'; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--grey); border-radius:9px; padding:.5rem .9rem; font-size:.9rem; font-weight:600; display:inline-flex; gap:.5rem; align-items:center; }
+  .rswitch button.active{ border-color:var(--brand-green); background:var(--soft-green); color:var(--brand-green-dark); }
+
+  .panel{ background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(19,56,75,.04); }
+  .panel + .panel{ margin-top:1rem; }
+
+  /* filter toolbar */
+  .toolbar{ padding:1rem 1.1rem; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:.75rem; align-items:end; }
+  .toolbar .fld{ display:flex; flex-direction:column; gap:.3rem; }
+  .toolbar label{ font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color:var(--grey); }
+  .toolbar .form-control, .toolbar .form-select{ border-color:var(--line); border-radius:9px; padding:.45rem .7rem; font-size:.9rem; min-width:160px; }
+  .toolbar .form-control:focus, .toolbar .form-select:focus{ border-color:var(--brand-green); box-shadow:0 0 0 .2rem rgba(81,191,157,.18); }
+  .chk-row{ display:flex; gap:.4rem; flex-wrap:wrap; }
+  .chk{ display:inline-flex; align-items:center; gap:.4rem; border:1px solid var(--line); border-radius:8px; padding:.35rem .6rem; font-size:.85rem; font-weight:500; cursor:pointer; }
+  .chk input{ accent-color:var(--brand-green); }
+  .chk:has(input:checked){ background:var(--soft-green); border-color:var(--brand-green); color:var(--brand-green-dark); }
+  .btn{ border-radius:9px; font-weight:500; }
+  .btn-brand{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+  .btn-brand:hover{ background:var(--brand-green-dark); border-color:var(--brand-green-dark); color:#fff; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); color:var(--ink); }
+  .btn-ghost:hover{ background:#f2f5f6; }
+
+  /* summary stat cards */
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.8rem; padding:1.1rem; }
+  .stat{ border:1px solid var(--line); border-radius:12px; padding:.9rem 1rem; }
+  .stat .k{ font-size:.72rem; text-transform:uppercase; letter-spacing:.03em; color:var(--grey); font-weight:600; }
+  .stat .v{ font-size:1.6rem; font-weight:700; color:var(--ink); margin-top:.2rem; }
+  .stat .v small{ font-size:.8rem; font-weight:500; color:var(--brand-green-dark); }
+
+  table.rt{ width:100%; border-collapse:separate; border-spacing:0; font-size:.9rem; }
+  table.rt thead th{ background:#fbfcfc; color:var(--ink); font-weight:600; font-size:.74rem; text-transform:uppercase; letter-spacing:.03em; padding:.7rem .8rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+  table.rt thead th.num, table.rt td.num{ text-align:center; }
+  table.rt tbody td{ padding:.65rem .8rem; border-bottom:1px solid var(--line); vertical-align:middle; }
+  table.rt tbody tr:hover{ background:#f8fbfa; }
+  table.rt tfoot td{ padding:.7rem .8rem; font-weight:700; background:#fbfcfc; border-top:2px solid var(--line); }
+  .cname{ font-weight:600; color:var(--brand-green-dark); text-decoration:none; }
+  .cname:hover{ text-decoration:underline; }
+  .muted{ color:var(--grey); }
+  .branch-tag{ display:inline-block; background:#eef1f2; color:var(--grey); border-radius:6px; padding:.1rem .5rem; font-size:.8rem; font-weight:500; }
+
+  .pill{ display:inline-flex; align-items:center; gap:.35rem; border-radius:20px; padding:.2rem .6rem; font-size:.76rem; font-weight:600; white-space:nowrap; }
+  .p-green{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .p-orange{ background:rgba(246,140,61,.15); color:#b6650f; }
+  .p-carmine{ background:rgba(218,46,114,.12); color:#a81d56; }
+  .p-purple{ background:rgba(105,80,161,.12); color:#54417f; }
+  .p-grey{ background:#eef1f2; color:var(--grey); }
+  .num-badge{ display:inline-grid; place-items:center; min-width:26px; height:24px; border-radius:7px; background:var(--soft-green); color:var(--brand-green-dark); font-weight:700; font-size:.82rem; padding:0 .4rem; }
+  .num-zero{ color:#c2cace; }
+
+  .act-btn{ display:inline-grid; place-items:center; width:30px; height:26px; border-radius:7px; font-size:.72rem; font-weight:700; text-decoration:none; }
+  .act-p{ background:var(--brand-green-dark); color:#fff; }
+  .act-ra{ background:#fff; border:1px solid var(--line); color:var(--grey); }
+  .act-ra:hover{ border-color:var(--brand-green); color:var(--brand-green-dark); }
+
+  /* system log row */
+  .log-ic{ width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex:none; font-size:.85rem; }
+  .results-head{ display:flex; align-items:center; justify-content:space-between; padding:.8rem 1.1rem; border-bottom:1px solid var(--line); }
+  .results-head .count{ font-weight:600; font-size:.92rem; } .results-head .count span{ color:var(--grey); font-weight:400; }
+  .pagination .page-link{ color:var(--ink); border-color:var(--line); }
+  .pagination .page-item.active .page-link{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+
+  .variant.hidden{ display:none; }
+
+  /* footer */
+  .site-footer{ background:var(--ink); color:rgba(255,255,255,.7); border-top:3px solid var(--brand-green); margin-top:auto; }
+  .site-footer .footer-inner{ display:flex; flex-wrap:wrap; gap:2rem 3rem; justify-content:space-between; padding:2.4rem 0 1.6rem; }
+  .site-footer .footer-brand{ max-width:320px; } .site-footer .footer-brand img{ height:64px; width:auto; }
+  .site-footer .footer-brand p{ margin:.8rem 0 0; font-size:.85rem; line-height:1.5; color:rgba(255,255,255,.6); }
+  .site-footer .footer-col h6{ color:#fff; font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin:0 0 1rem; }
+  .site-footer .footer-links{ display:flex; flex-direction:column; gap:.7rem; }
+  .site-footer .footer-links a{ color:rgba(255,255,255,.7); text-decoration:none; font-size:.88rem; display:inline-flex; align-items:center; gap:.55rem; width:fit-content; }
+  .site-footer .footer-links a i{ color:var(--brand-green); font-size:.82rem; width:16px; text-align:center; }
+  .site-footer .footer-links a:hover{ color:#fff; }
+  .site-footer .footer-bar{ border-top:1px solid rgba(255,255,255,.1); display:flex; flex-wrap:wrap; gap:.6rem 1.5rem; align-items:center; justify-content:space-between; padding:1.1rem 0; font-size:.82rem; color:rgba(255,255,255,.55); }
+  .site-footer .footer-bar .chip-v{ background:rgba(81,191,157,.16); color:#7fd9c0; border-radius:6px; padding:.12rem .5rem; font-weight:600; font-size:.76rem; }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg cpm-navbar">
+  <div class="container-xxl">
+    <a class="navbar-brand" href="care_plan_search_V3.html"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou" style="height:46px;width:auto;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpmNav"><i class="fas fa-bars"></i></button>
+    <div class="collapse navbar-collapse" id="cpmNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-users me-2"></i>Clients</a>
+          <ul class="dropdown-menu cpm-dropdown">
+            <li><a class="dropdown-item" href="onboarding_V3.html"><i class="fas fa-user-plus"></i> Add New Client</a></li>
+            <li><a class="dropdown-item" href="care_plan_search_V3.html"><i class="fas fa-folder-open"></i> Care Plan Manager</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="settings_V3.html"><i class="fas fa-gear me-2"></i>Settings</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="avatar me-2">GO</span> Ger O'Keeffe</a>
+          <ul class="dropdown-menu dropdown-menu-end cpm-dropdown"><li><a class="dropdown-item" href="user_profile_V3.html"><i class="fas fa-id-badge"></i> My Profile &amp; Access</a></li><li><a class="dropdown-item" href="release_notes_V3.html"><i class="fas fa-bullhorn"></i> Release Notes</a></li><li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li></ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xxl" style="padding-bottom:2rem;">
+  <div class="page-head">
+    <div class="icon"><i class="fas fa-chart-bar"></i></div>
+    <div><h1 id="rTitle">Care Plan Activity</h1><p id="rSub">Monitor care plans and track reassessment schedules</p></div>
+  </div>
+
+  <div class="rswitch">
+    <button class="active" data-v="cpa"><i class="fas fa-file-medical"></i> Care Plan Activity</button>
+    <button data-v="weekly"><i class="fas fa-calendar-week"></i> Weekly Activity</button>
+    <button data-v="logs"><i class="fas fa-list"></i> System Logs</button>
+  </div>
+
+  <!-- ===== CARE PLAN ACTIVITY ===== -->
+  <div class="variant" data-v="cpa">
+    <div class="panel">
+      <div class="toolbar">
+        <div class="fld"><label>Branch</label><select class="form-select" id="cpaBranch"><option value="">All Branches</option><option>Tullamore</option><option>Athlone</option><option>Mullingar</option></select></div>
+        <div class="fld"><label>Client Name</label><input class="form-control" id="cpaName" placeholder="Search by name"></div>
+        <div class="fld"><label>Client ID</label><input class="form-control" id="cpaId" placeholder="Search by ID"></div>
+        <div class="fld"><label>Activity</label>
+          <div class="chk-row">
+            <label class="chk"><input type="checkbox" checked> Active</label>
+            <label class="chk"><input type="checkbox"> Suspended</label>
+            <label class="chk"><input type="checkbox"> End of Service</label>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Total Clients</div><div class="v">128</div></div>
+        <div class="stat"><div class="k">Reassessment Due</div><div class="v" style="color:var(--carmine)">6</div></div>
+        <div class="stat"><div class="k">Reassessment Soon</div><div class="v" style="color:#b6650f">11</div></div>
+        <div class="stat"><div class="k">Active</div><div class="v">114</div></div>
+      </div>
+      <div class="table-responsive">
+        <table class="rt">
+          <thead><tr><th>Client Name</th><th>Client ID</th><th class="num">Activity</th><th>Branch</th><th class="num">CP Approved</th><th class="num">Active Days</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr class="cpa-row" data-branch="Athlone" data-name="patrick nolan" data-code="75377"><td><a class="cname" href="client_profile_V3.html">Patrick Nolan</a></td><td class="muted">75377</td><td class="num"><span class="pill p-green">ACT</span></td><td><span class="branch-tag">Athlone</span></td><td class="num">11/06/2026</td><td class="num">352</td><td><span class="pill p-carmine"><i class="fas fa-triangle-exclamation"></i> Reassessment Due</span></td><td><a class="act-btn act-ra" href="#">RA</a></td></tr>
+            <tr class="cpa-row" data-branch="Mullingar" data-name="thomas kearns" data-code="75344"><td><a class="cname" href="client_profile_V3.html">Thomas Kearns</a></td><td class="muted">75344</td><td class="num"><span class="pill p-green">ACT</span></td><td><span class="branch-tag">Mullingar</span></td><td class="num">02/05/2026</td><td class="num">312</td><td><span class="pill p-orange"><i class="fas fa-clock"></i> Reassessment Soon</span></td><td><a class="act-btn act-ra" href="#">RA</a></td></tr>
+            <tr class="cpa-row" data-branch="Tullamore" data-name="margaret finlay" data-code="75412"><td><a class="cname" href="client_profile_V3.html">Margaret Finlay</a></td><td class="muted">75412</td><td class="num"><span class="pill p-green">ACT</span></td><td><span class="branch-tag">Tullamore</span></td><td class="num">22/06/2026</td><td class="num">95</td><td><span class="pill p-grey">No action</span></td><td></td></tr>
+            <tr class="cpa-row" data-branch="Mullingar" data-name="eileen brennan" data-code="75361"><td><a class="cname" href="client_profile_V3.html">Eileen Brennan</a></td><td class="muted">75361</td><td class="num"><span class="pill p-purple">REACT</span></td><td><span class="branch-tag">Mullingar</span></td><td class="num">24/05/2026</td><td class="num">204</td><td><span class="pill p-purple">Reactivated</span></td><td><a class="act-btn act-ra" href="#">RA</a></td></tr>
+            <tr class="cpa-row" data-branch="Tullamore" data-name="colm bracken" data-code="75433"><td><a class="cname" href="client_profile_V3.html">Colm Bracken</a></td><td class="muted">75433</td><td class="num"><span class="pill p-green">ACT</span></td><td><span class="branch-tag">Tullamore</span></td><td class="num">06/03/2026</td><td class="num">110</td><td><span class="pill p-grey">No action</span></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="results-head" style="border-bottom:none;border-top:1px solid var(--line);">
+        <div class="count"><span id="cpaCount">5</span> clients <span>shown · sample data</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WEEKLY ACTIVITY ===== -->
+  <div class="variant hidden" data-v="weekly">
+    <div class="panel">
+      <div class="toolbar">
+        <div class="fld"><label>Period</label><select class="form-select"><option>Last 8 weeks</option><option selected>Last 12 weeks</option><option>Last 26 weeks</option></select></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Care Plans Signed</div><div class="v">42</div></div>
+        <div class="stat"><div class="k">Care Plans Generated</div><div class="v">57</div></div>
+        <div class="stat"><div class="k">New Clients</div><div class="v">19</div></div>
+        <div class="stat"><div class="k">Assessments Completed</div><div class="v">88 <small>SA+HA+RA</small></div></div>
+      </div>
+      <div class="table-responsive">
+        <table class="rt">
+          <thead><tr><th>Week</th><th>Week Beginning</th><th class="num">CP Signed</th><th class="num">CP Generated</th><th class="num">New Clients</th><th class="num">Active Branches</th><th class="num">SA</th><th class="num">HA</th><th class="num">RA</th></tr></thead>
+          <tbody>
+            <tr><td><b>W26</b></td><td class="muted">22/06/2026</td><td class="num"><span class="num-badge">4</span></td><td class="num"><span class="num-badge">6</span></td><td class="num"><span class="num-badge">2</span></td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">2</span></td><td class="num num-zero">0</td></tr>
+            <tr><td><b>W25</b></td><td class="muted">15/06/2026</td><td class="num"><span class="num-badge">6</span></td><td class="num"><span class="num-badge">5</span></td><td class="num"><span class="num-badge">1</span></td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">2</span></td><td class="num"><span class="num-badge">4</span></td><td class="num"><span class="num-badge">1</span></td></tr>
+            <tr><td><b>W24</b></td><td class="muted">08/06/2026</td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">4</span></td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">2</span></td><td class="num"><span class="num-badge">5</span></td><td class="num"><span class="num-badge">1</span></td><td class="num"><span class="num-badge">2</span></td></tr>
+            <tr><td><b>W23</b></td><td class="muted">01/06/2026</td><td class="num"><span class="num-badge">5</span></td><td class="num"><span class="num-badge">7</span></td><td class="num"><span class="num-badge">2</span></td><td class="num"><span class="num-badge">3</span></td><td class="num"><span class="num-badge">4</span></td><td class="num"><span class="num-badge">3</span></td><td class="num num-zero">0</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="2">Totals</td><td class="num">18</td><td class="num">22</td><td class="num">8</td><td class="num">—</td><td class="num">14</td><td class="num">10</td><td class="num">3</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SYSTEM LOGS ===== -->
+  <div class="variant hidden" data-v="logs">
+    <div class="panel">
+      <div class="toolbar">
+        <div class="fld"><label>Time Period</label><select class="form-select"><option>Last 24 hours</option><option selected>Last 7 days</option><option>Last 30 days</option><option>Last 3 months</option><option>All time</option></select></div>
+        <div class="fld"><label>Action Type</label><select class="form-select" id="logAction"><option value="">All actions</option><option>Login</option><option>Client Updated</option><option>Care Plan Signed</option><option>Assessment Sent</option></select></div>
+        <div class="fld"><label>User</label><input class="form-control" placeholder="Search by user email"></div>
+      </div>
+      <div class="results-head"><div class="count">Showing 6 <span>of 1,204 activities</span></div></div>
+      <div class="table-responsive">
+        <table class="rt">
+          <thead><tr><th style="width:160px;">Timestamp</th><th>Action</th><th>User</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr class="log-row" data-action="Care Plan Signed"><td class="muted">25/06 14:32</td><td><span class="pill p-green"><i class="fas fa-file-signature"></i> Care Plan Signed</span></td><td>ger.okeeffe@…</td><td class="muted">Care plan fully signed for Colm Bracken (75433)</td></tr>
+            <tr class="log-row" data-action="Assessment Sent"><td class="muted">25/06 13:10</td><td><span class="pill p-purple"><i class="fas fa-paper-plane"></i> Assessment Sent</span></td><td>ger.okeeffe@…</td><td class="muted">Home assessment email sent to assessor for Mary Ralph</td></tr>
+            <tr class="log-row" data-action="Client Updated"><td class="muted">25/06 11:48</td><td><span class="pill p-grey"><i class="fas fa-user-pen"></i> Client Updated</span></td><td>katie.okeeffe@…</td><td class="muted">Profile updated — Patrick Nolan (75377)</td></tr>
+            <tr class="log-row" data-action="Client Added"><td class="muted">25/06 09:05</td><td><span class="pill p-green"><i class="fas fa-user-plus"></i> Client Added</span></td><td>katie.okeeffe@…</td><td class="muted">New client onboarded — Sarah Murphy (75414)</td></tr>
+            <tr class="log-row" data-action="Login"><td class="muted">24/06 17:22</td><td><span class="pill p-grey"><i class="fas fa-right-to-bracket"></i> Login</span></td><td>liam.doyle@…</td><td class="muted">Signed in from Tullamore branch</td></tr>
+            <tr class="log-row" data-action="Import"><td class="muted">24/06 16:01</td><td><span class="pill p-orange"><i class="fas fa-file-import"></i> Import</span></td><td>ger.okeeffe@…</td><td class="muted">Imported 12 clients from Excel</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="results-head" style="border-bottom:none;border-top:1px solid var(--line);">
+        <div class="count">6 activities <span>shown · sample data</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container-xxl">
+    <div class="footer-inner">
+      <div class="footer-brand"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou"><p>Transforming Care Plan Management for Healthcare Excellence</p></div>
+      <div class="footer-col"><h6>Legal</h6><div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="#"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</a>
+        <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+        <a href="#"><i class="fas fa-building"></i> Company Information</a>
+      </div></div>
+    </div>
+    <div class="footer-bar"><span>&copy; 2026 Allwayswithyou. All rights reserved.</span><span>Care Plan Manager <span class="chip-v">v2.4.1</span></span></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const titles = {
+    cpa:['Care Plan Activity','Monitor care plans and track reassessment schedules'],
+    weekly:['Weekly Activity','Operational KPIs aggregated by ISO work week (Mon–Sun)'],
+    logs:['System Logs','System activity and user actions tracking']
+  };
+  const sw = document.querySelectorAll('.rswitch button');
+  const vars = document.querySelectorAll('.variant');
+  function go(v){
+    sw.forEach(b=>b.classList.toggle('active', b.dataset.v===v));
+    vars.forEach(x=>x.classList.toggle('hidden', x.dataset.v!==v));
+    document.getElementById('rTitle').textContent = titles[v][0];
+    document.getElementById('rSub').textContent = titles[v][1];
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  sw.forEach(b=>b.addEventListener('click',()=>go(b.dataset.v)));
+  document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.go);}));
+
+  // live filters (instant — no Apply/Filter button needed for this prototype)
+  const cpaBranch = document.getElementById('cpaBranch');
+  const cpaName = document.getElementById('cpaName');
+  const cpaId = document.getElementById('cpaId');
+  const cpaCount = document.getElementById('cpaCount');
+  function applyCpa(){
+    const b = cpaBranch ? cpaBranch.value : '';
+    const n = cpaName ? cpaName.value.trim().toLowerCase() : '';
+    const id = cpaId ? cpaId.value.trim() : '';
+    let shown = 0;
+    document.querySelectorAll('.cpa-row').forEach(r=>{
+      const ok = (!b || r.dataset.branch===b) && (!n || r.dataset.name.includes(n)) && (!id || r.dataset.code.includes(id));
+      r.style.display = ok ? '' : 'none';
+      if(ok) shown++;
+    });
+    if (cpaCount) cpaCount.textContent = shown;
+  }
+  [cpaBranch, cpaName, cpaId].forEach(el=>{ if(el){ el.addEventListener('input', applyCpa); el.addEventListener('change', applyCpa); } });
+  const logAction = document.getElementById('logAction');
+  if (logAction) logAction.addEventListener('change', ()=>{
+    const v = logAction.value;
+    document.querySelectorAll('.log-row').forEach(r=>{ r.style.display = (!v || r.dataset.action===v) ? '' : 'none'; });
+  });
+</script>
+</body>
+</html>

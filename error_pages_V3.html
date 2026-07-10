@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error Pages — Redesign</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B; --line:#e6eaec; --page:#f4f6f7; --soft-green:rgba(81,191,157,.10); --amber:#F68C3D; --carmine:#DA2E72; }
+  body{ font-family:'Prompt',sans-serif; color:var(--ink); background:var(--page); margin:0; }
+  h1,h2,h3,h4,h5,h6{ font-weight:600; color:var(--ink); }
+  .topnav{ background:var(--ink); padding:.5rem 0; }
+  .topnav .w{ max-width:1240px; margin:0 auto; padding:0 1.5rem; }
+  .topnav img{ height:42px; }
+
+  .err-wrap{ min-height:78vh; display:flex; align-items:center; justify-content:center; padding:2rem 1.5rem; }
+  .err-card{
+    position:relative; overflow:hidden; background:#fff; border:1px solid var(--line);
+    border-radius:18px; box-shadow:0 10px 40px rgba(19,56,75,.08); max-width:560px; width:100%; text-align:center;
+    padding:3rem 2.5rem 2.5rem;
+  }
+  /* brand motif strip at the top of the card */
+  .err-card .motif{ position:absolute; top:0; left:0; right:0; height:90px; background:#0e4d4d url('assets/awy-brand-bg.png') center/cover no-repeat; opacity:.9; }
+  .err-card .motif::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(14,77,77,.25), rgba(14,77,77,.55)); }
+
+  .err-badge{
+    position:relative; z-index:1; width:84px; height:84px; border-radius:22px; margin:1rem auto 1.3rem;
+    display:grid; place-items:center; font-size:2.1rem; color:#fff; box-shadow:0 8px 22px rgba(19,56,75,.18);
+  }
+  .err-badge.warn{ background:linear-gradient(135deg,#f6a04b,var(--amber)); }
+  .err-badge.danger{ background:linear-gradient(135deg,#e85c8f,var(--carmine)); }
+
+  .err-code{ font-size:.82rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--grey); }
+  .err-card h1{ font-size:1.7rem; margin:.3rem 0 .6rem; }
+  .err-card p.lead{ color:var(--grey); font-size:1rem; margin:0 auto 1.8rem; max-width:400px; line-height:1.55; }
+
+  .err-actions{ display:flex; flex-direction:column; gap:.6rem; max-width:320px; margin:0 auto; }
+  .btn{ border-radius:10px; font-weight:500; padding:.6rem 1rem; }
+  .btn-brand{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+  .btn-brand:hover{ background:var(--brand-green-dark); border-color:var(--brand-green-dark); color:#fff; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); color:var(--ink); }
+  .btn-ghost:hover{ background:#f2f5f6; color:var(--ink); }
+
+  .err-help{ margin-top:1.6rem; font-size:.84rem; color:var(--grey); }
+  .err-help a{ color:var(--brand-green-dark); text-decoration:none; font-weight:500; }
+
+  .switcher{ position:fixed; top:14px; right:14px; display:flex; gap:.4rem; z-index:10; }
+  .switcher button{ font-family:'Prompt'; font-size:.8rem; font-weight:600; border:1px solid var(--line); background:#fff; color:var(--grey); border-radius:8px; padding:.35rem .7rem; cursor:pointer; }
+  .switcher button.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .variant.hidden{ display:none; }
+</style>
+</head>
+<body>
+<div class="switcher">
+  <button class="active" data-v="404">404</button>
+  <button data-v="500">500</button>
+</div>
+
+<nav class="topnav"><div class="w"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou"></div></nav>
+
+<!-- ===== 404 ===== -->
+<div class="variant" data-v="404">
+  <div class="err-wrap">
+    <div class="err-card">
+      <div class="motif"></div>
+      <div class="err-badge warn"><i class="fas fa-compass"></i></div>
+      <div class="err-code">Error 404</div>
+      <h1>This page can't be found</h1>
+      <p class="lead">The page you're looking for doesn't exist or may have been moved. Let's get you back on track.</p>
+      <div class="err-actions">
+        <a href="#" class="btn btn-brand"><i class="fas fa-folder-open me-2"></i>Go to Care Plan Manager</a>
+        <a href="#" class="btn btn-ghost"><i class="fas fa-user-plus me-2"></i>Add New Client</a>
+        <a href="#" class="btn btn-ghost"><i class="fas fa-arrow-left me-2"></i>Go Back</a>
+      </div>
+      <div class="err-help">Still stuck? <a href="#">Contact support</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 500 ===== -->
+<div class="variant hidden" data-v="500">
+  <div class="err-wrap">
+    <div class="err-card">
+      <div class="motif"></div>
+      <div class="err-badge danger"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="err-code">Error 500</div>
+      <h1>Something went wrong</h1>
+      <p class="lead">A problem occurred on our end. The issue has been logged — please try again in a moment.</p>
+      <div class="err-actions">
+        <a href="#" class="btn btn-brand"><i class="fas fa-rotate-right me-2"></i>Try Again</a>
+        <a href="#" class="btn btn-ghost"><i class="fas fa-folder-open me-2"></i>Go to Care Plan Manager</a>
+        <a href="#" class="btn btn-ghost"><i class="fas fa-arrow-left me-2"></i>Go Back</a>
+      </div>
+      <div class="err-help">If this keeps happening, <a href="#">contact support</a>.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const btns = document.querySelectorAll('.switcher button');
+  const vars = document.querySelectorAll('.variant');
+  btns.forEach(b=>b.addEventListener('click', ()=>{
+    btns.forEach(x=>x.classList.remove('active')); b.classList.add('active');
+    vars.forEach(v=>v.classList.toggle('hidden', v.dataset.v !== b.dataset.v));
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding — Add New Client</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B; --line:#e6eaec; --page:#f4f6f7; --soft-green:rgba(81,191,157,.10); --blue:#1B75BC; --orange:#F68C3D; --carmine:#DA2E72; }
+  *{box-sizing:border-box;}
+  body{ font-family:'Prompt',sans-serif; color:var(--ink); background:var(--page); margin:0; display:flex; flex-direction:column; min-height:100vh; }
+  h1,h2,h3,h4,h5,h6{ font-weight:600; color:var(--ink); }
+
+  /* navbar */
+  .cpm-navbar{ background:var(--ink); padding:.45rem 0; position:relative; z-index:1030; }
+  .cpm-navbar .navbar-brand{ padding:0; margin-right:1.4rem; display:flex; align-items:center; }
+  .cpm-navbar .navbar-toggler{ border:1px solid rgba(255,255,255,.25); color:#fff; padding:.35rem .6rem; }
+  .cpm-navbar .navbar-toggler:focus{ box-shadow:none; }
+  .cpm-navbar .nav-link{ color:rgba(255,255,255,.85)!important; font-weight:500; font-size:.92rem; padding:.5rem .8rem!important; border-radius:8px; display:flex; align-items:center; }
+  .cpm-navbar .nav-link:hover{ color:#fff!important; background:rgba(255,255,255,.08); }
+  .cpm-navbar .nav-link.active{ color:#fff!important; background:rgba(81,191,157,.20); }
+  .cpm-navbar .dropdown-toggle::after{ margin-left:.45rem; opacity:.55; }
+  .cpm-dropdown{ border:1px solid var(--line); border-radius:10px; padding:.35rem; box-shadow:0 12px 32px rgba(19,56,75,.18); min-width:224px; margin-top:.4rem; }
+  .cpm-dropdown .dropdown-item{ border-radius:7px; padding:.5rem .7rem; display:flex; align-items:center; gap:.65rem; color:var(--ink); font-size:.9rem; }
+  .cpm-dropdown .dropdown-item i{ color:var(--brand-green-dark); width:18px; text-align:center; }
+  .cpm-dropdown .dropdown-item:hover{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-dropdown .dropdown-item.active,.cpm-dropdown .dropdown-item:active{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-navbar .avatar{ width:30px; height:30px; border-radius:50%; background:var(--brand-green); color:#fff; display:grid; place-items:center; font-size:.74rem; font-weight:700; flex:none; }
+
+  .crumb{ padding:.9rem 0 .2rem; }
+  .crumb a{ color:var(--grey); text-decoration:none; font-size:.86rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; }
+  .crumb a:hover{ color:var(--brand-green-dark); }
+
+  .page-head{ display:flex; align-items:center; gap:.85rem; padding:.3rem 0 1rem; }
+  .page-head .icon{ width:48px; height:48px; border-radius:12px; flex:none; background:var(--soft-green); color:var(--brand-green-dark); display:grid; place-items:center; font-size:1.25rem; }
+  .page-head h1{ font-size:1.5rem; margin:0; line-height:1.1; }
+  .page-head p{ margin:0; color:var(--grey); font-size:.92rem; }
+
+  /* stepper tabs */
+  .steps{ display:flex; gap:.6rem; flex-wrap:wrap; border-bottom:1px solid var(--line); margin-bottom:1rem; }
+  .step{ border:none; background:none; cursor:pointer; font-family:'Prompt'; font-size:.95rem; font-weight:600; color:var(--grey); padding:.85rem .4rem; margin-right:.6rem; border-bottom:3px solid transparent; display:inline-flex; align-items:center; gap:.6rem; }
+  .step .num{ width:24px; height:24px; border-radius:50%; background:#eef1f2; color:var(--grey); display:grid; place-items:center; font-size:.78rem; font-weight:700; }
+  .step:hover{ color:var(--ink); }
+  .step.active{ color:var(--brand-green-dark); border-bottom-color:var(--brand-green); }
+  .step.active .num{ background:var(--brand-green); color:#fff; }
+  .step.done .num{ background:var(--brand-green-dark); color:#fff; }
+
+  .panel{ background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(19,56,75,.04); }
+  .panel + .panel{ margin-top:1rem; }
+  .section-title{ font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--grey); font-weight:600; margin:0 0 1rem; display:flex; align-items:center; gap:.5rem; }
+  .section-title i{ color:var(--brand-green-dark); }
+  .form-label{ font-weight:500; color:var(--ink); font-size:.8rem; margin-bottom:.3rem; }
+  .req{ color:var(--carmine); }
+  .form-control,.form-select{ border-color:var(--line); border-radius:9px; padding:.5rem .75rem; font-size:.92rem; }
+  .form-control:focus,.form-select:focus{ border-color:var(--brand-green); box-shadow:0 0 0 .2rem rgba(81,191,157,.18); }
+
+  /* pill toggles (replaces Days/Hours multi-select) */
+  .pills{ display:flex; flex-wrap:wrap; gap:.45rem; }
+  .pill{ cursor:pointer; user-select:none; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:9px; padding:.4rem .75rem; font-size:.88rem; font-weight:500; }
+  .pill input{ display:none; }
+  .pill.on{ background:var(--soft-green); border-color:var(--brand-green); color:var(--brand-green-dark); }
+  .pill.on::before{ content:"\f00c"; font-family:"Font Awesome 6 Free"; font-weight:900; font-size:.72rem; margin-right:.4rem; }
+
+  /* searchable checkbox chips (replaces care-requirements multi-select) */
+  .chip-search{ position:relative; margin-bottom:.7rem; }
+  .chip-search i{ position:absolute; left:.7rem; top:50%; transform:translateY(-50%); color:var(--grey); font-size:.85rem; }
+  .chip-search input{ width:100%; border:1px solid var(--line); border-radius:9px; padding:.5rem .7rem .5rem 2rem; font-size:.9rem; }
+  .chip-grid{ display:flex; flex-wrap:wrap; gap:.45rem; max-height:200px; overflow-y:auto; padding:.2rem; }
+  .chip{ cursor:pointer; user-select:none; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:20px; padding:.35rem .8rem; font-size:.86rem; }
+  .chip input{ display:none; }
+  .chip.on{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+
+  .btn{ border-radius:9px; font-weight:500; }
+  .btn-brand{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+  .btn-brand:hover{ background:var(--brand-green-dark); border-color:var(--brand-green-dark); color:#fff; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); color:var(--ink); }
+  .btn-ghost:hover{ background:#f2f5f6; color:var(--ink); }
+
+  .form-check-input:checked{ background-color:var(--brand-green); border-color:var(--brand-green); }
+  .actions{ display:flex; justify-content:space-between; align-items:center; gap:.75rem; margin-top:1.1rem; }
+  .actions .muted{ color:var(--grey); font-size:.85rem; }
+  .tabpane{ display:none; }
+  .tabpane.show{ display:block; }
+
+  /* footer */
+  .site-footer{ background:var(--ink); color:rgba(255,255,255,.7); border-top:3px solid var(--brand-green); margin-top:auto; }
+  .site-footer .footer-inner{ display:flex; flex-wrap:wrap; gap:2rem 3rem; justify-content:space-between; padding:2.4rem 0 1.6rem; }
+  .site-footer .footer-brand{ max-width:320px; }
+  .site-footer .footer-brand img{ height:64px; width:auto; }
+  .site-footer .footer-brand p{ margin:.8rem 0 0; font-size:.85rem; line-height:1.5; color:rgba(255,255,255,.6); }
+  .site-footer .footer-col h6{ color:#fff; font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin:0 0 1rem; }
+  .site-footer .footer-links{ display:flex; flex-direction:column; gap:.7rem; }
+  .site-footer .footer-links a{ color:rgba(255,255,255,.7); text-decoration:none; font-size:.88rem; display:inline-flex; align-items:center; gap:.55rem; width:fit-content; }
+  .site-footer .footer-links a i{ color:var(--brand-green); font-size:.82rem; width:16px; text-align:center; }
+  .site-footer .footer-links a:hover{ color:#fff; }
+  .site-footer .footer-bar{ border-top:1px solid rgba(255,255,255,.1); display:flex; flex-wrap:wrap; gap:.6rem 1.5rem; align-items:center; justify-content:space-between; padding:1.1rem 0; font-size:.82rem; color:rgba(255,255,255,.55); }
+  .site-footer .footer-bar .chip-v{ background:rgba(81,191,157,.16); color:#7fd9c0; border-radius:6px; padding:.12rem .5rem; font-weight:600; font-size:.76rem; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg cpm-navbar">
+  <div class="container-xxl">
+    <a class="navbar-brand" href="care_plan_search_V3.html"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou" style="height:46px;width:auto;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpmNav"><i class="fas fa-bars"></i></button>
+    <div class="collapse navbar-collapse" id="cpmNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-users me-2"></i>Clients</a>
+          <ul class="dropdown-menu cpm-dropdown">
+            <li><a class="dropdown-item" href="onboarding_V3.html"><i class="fas fa-user-plus"></i> Add New Client</a></li>
+            <li><a class="dropdown-item" href="care_plan_search_V3.html"><i class="fas fa-folder-open"></i> Care Plan Manager</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="report_pages_V3.html"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="settings_V3.html"><i class="fas fa-gear me-2"></i>Settings</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="avatar me-2">GO</span> Ger O'Keeffe</a>
+          <ul class="dropdown-menu dropdown-menu-end cpm-dropdown">
+            <li><a class="dropdown-item" href="user_profile_V3.html"><i class="fas fa-id-badge"></i> My Profile &amp; Access</a></li>
+            <li><a class="dropdown-item" href="release_notes_V3.html"><i class="fas fa-bullhorn"></i> Release Notes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xxl" style="padding-bottom:2rem;">
+  <div class="crumb"><a href="care_plan_search_V3.html"><i class="fas fa-arrow-left"></i> Care Plan Manager</a></div>
+
+  <div class="page-head">
+    <div class="icon"><i class="fas fa-user-plus"></i></div>
+    <div>
+      <h1>Add New Client</h1>
+      <p>Capture client details, then complete the care coordinator intake</p>
+    </div>
+  </div>
+
+  <div class="steps">
+    <button class="step active" data-step="details"><span class="num">1</span> Client Details</button>
+    <button class="step" data-step="intake"><span class="num">2</span> Care Coordinator &amp; Intake</button>
+  </div>
+
+  <form method="POST" id="onboardForm">
+
+    <!-- ===== STEP 1: CLIENT DETAILS ===== -->
+    <div class="tabpane show" data-pane="details">
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-user"></i> Client information</div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Client Name <span class="req">*</span></label><input class="form-control" name="client_name" placeholder="Full name of the client" required></div>
+          <div class="col-md-6"><label class="form-label">Client ID <span class="req">*</span></label><input class="form-control" name="client_id" placeholder="Unique client identifier" required></div>
+          <div class="col-md-6"><label class="form-label">Client Address</label><input class="form-control" name="client_address" placeholder="Full residential address"></div>
+          <div class="col-md-3"><label class="form-label">Eircode</label><input class="form-control" name="eircode" maxlength="8" placeholder="Irish postal code"></div>
+          <div class="col-md-3"><label class="form-label">Client DOB</label><input type="date" class="form-control" name="client_dob"></div>
+        </div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-address-book"></i> Contact details</div>
+        <div class="row g-3">
+          <div class="col-md-4"><label class="form-label">First Contact Date</label><input type="date" class="form-control" name="first_contact_date"></div>
+          <div class="col-md-4"><label class="form-label">Client Tel</label><input type="tel" class="form-control" name="client_tel" placeholder="Primary phone number"></div>
+          <div class="col-md-4"><label class="form-label">Client Email Address</label><input type="email" class="form-control" name="client_email_address" placeholder="client@example.com"></div>
+          <div class="col-md-4"><label class="form-label">Client Gender</label>
+            <select class="form-select" name="client_gender"><option value="">Select…</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select>
+          </div>
+          <div class="col-md-4"><label class="form-label">Client Language</label><input class="form-control" name="client_language" placeholder="Primary language spoken"></div>
+        </div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-users"></i> Nominated support contact</div>
+        <div class="row g-3">
+          <div class="col-md-4"><label class="form-label">Nominated Support Person</label><input class="form-control" name="nominated_support_person" placeholder="Name of support person"></div>
+          <div class="col-md-4"><label class="form-label">Nominated Contact Mobile</label><input type="tel" class="form-control" name="nominated_contact_person_mobile" placeholder="Emergency contact mobile"></div>
+          <div class="col-md-4"><label class="form-label">Nominated Support Email</label><input type="email" class="form-control" name="nominated_support_person_email_address" placeholder="support@example.com"></div>
+        </div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-file-signature"></i> Consent</div>
+        <div class="row g-3 align-items-end">
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="verbal_consent_received" name="verbal_consent_received" value="1">
+              <label class="form-check-label" for="verbal_consent_received">Verbal consent received to share client information with the nominated support person</label>
+            </div>
+          </div>
+          <div class="col-md-6"><label class="form-label">Consent Captured By</label><input class="form-control" name="consent_captured_by" placeholder="Staff member name"></div>
+          <div class="col-md-6"><label class="form-label">Date of Consent</label><input type="date" class="form-control" name="date_of_consent"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span class="muted"><i class="fas fa-database me-1"></i> Client Name and Client ID are required</span>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-ghost" id="saveOnly"><i class="fas fa-save me-1"></i> Save</button>
+          <button type="button" class="btn btn-brand" id="toIntake">Save &amp; Continue <i class="fas fa-arrow-right ms-1"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STEP 2: CARE COORDINATOR & INTAKE ===== -->
+    <div class="tabpane" data-pane="intake">
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-clipboard-list"></i> Intake</div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Branch <span class="req">*</span></label>
+            <select class="form-select" name="branch" required><option value="">Select Branch</option><option>Tullamore</option><option>Athlone</option><option>Mullingar</option></select>
+          </div>
+          <div class="col-md-6"><label class="form-label">Status <span class="req">*</span></label>
+            <select class="form-select" name="status" required>
+              <option value="">Select Status</option>
+              <option>Accepted – awaiting assessment</option>
+              <option>Accepted – assessments completed</option>
+              <option>Care Plan Approved</option>
+              <option>Care Agreement Approved</option>
+              <option>Initial review date booked</option>
+              <option>Started</option><option>Lost</option><option>Delayed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-calendar-days"></i> Schedule</div>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <label class="form-label">Days <span class="req">*</span></label>
+            <div class="pills" data-name="days">
+              <label class="pill"><input type="checkbox" value="Mn+BH">Mn+BH</label>
+              <label class="pill"><input type="checkbox" value="Mn–BH">Mn–BH</label>
+              <label class="pill"><input type="checkbox" value="Tu">Tu</label>
+              <label class="pill"><input type="checkbox" value="We">We</label>
+              <label class="pill"><input type="checkbox" value="Th">Th</label>
+              <label class="pill"><input type="checkbox" value="Fr">Fr</label>
+              <label class="pill"><input type="checkbox" value="Sa">Sa</label>
+              <label class="pill"><input type="checkbox" value="Su">Su</label>
+            </div>
+            <div class="hint" style="margin-top:.5rem;"><b>Mn+BH</b> = Mondays <b>including</b> bank-holiday Mondays · <b>Mn–BH</b> = Mondays <b>excluding</b> bank holidays · Tu–Su = Tuesday to Sunday.</div>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Hours <span class="req">*</span></label>
+            <div class="pills" data-name="hours">
+              <label class="pill"><input type="checkbox" value="8–11a">8–11a</label>
+              <label class="pill"><input type="checkbox" value="11–3p">11–3p</label>
+              <label class="pill"><input type="checkbox" value="3–6p">3–6p</label>
+              <label class="pill"><input type="checkbox" value="6–10p">6–10p</label>
+              <label class="pill"><input type="checkbox" value="ON">ON (overnight)</label>
+            </div>
+            <div class="hint" style="margin-top:.5rem;">Care-visit time bands: <b>8–11a</b> morning · <b>11–3p</b> midday · <b>3–6p</b> afternoon · <b>6–10p</b> evening · <b>ON</b> overnight.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-list-check"></i> Referral primary care requirements</div>
+        <div class="chip-grid" id="reqGrid"></div>
+      </div>
+
+      <div class="panel p-3 p-lg-4">
+        <div class="section-title"><i class="fas fa-user-doctor"></i> Assessor</div>
+        <div class="row g-3">
+          <div class="col-md-4"><label class="form-label">Assessor Name</label><input class="form-control" name="assessor_name" placeholder="Enter assessor name"></div>
+          <div class="col-md-4"><label class="form-label">Assessor Phone</label><input type="tel" class="form-control" name="assessor_tel"></div>
+          <div class="col-md-4"><label class="form-label">Assessor Email</label><input type="email" class="form-control" name="assessor_email"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="backDetails"><i class="fas fa-arrow-left me-1"></i> Back to Client Details</button>
+        <button type="submit" class="btn btn-brand"><i class="fas fa-check me-1"></i> Save Client</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<footer class="site-footer">
+  <div class="container-xxl">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou">
+        <p>Transforming Care Plan Management for Healthcare Excellence</p>
+      </div>
+      <div class="footer-col">
+        <h6>Legal</h6>
+        <div class="footer-links">
+          <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+          <a href="#"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</a>
+          <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+          <a href="#"><i class="fas fa-building"></i> Company Information</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>&copy; 2026 Allwayswithyou. All rights reserved.</span>
+      <span>Care Plan Manager <span class="chip-v">v2.4.1</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // step switching
+  const steps = document.querySelectorAll('.step');
+  const panes = document.querySelectorAll('.tabpane');
+  function go(step){
+    steps.forEach(s=>{
+      const is = s.dataset.step===step;
+      s.classList.toggle('active', is);
+    });
+    // mark step 1 done when on step 2
+    steps[0].classList.toggle('done', step==='intake');
+    panes.forEach(p=>p.classList.toggle('show', p.dataset.pane===step));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  steps.forEach(s=>s.addEventListener('click',()=>go(s.dataset.step)));
+  document.getElementById('toIntake').addEventListener('click',()=>go('intake'));
+  document.getElementById('backDetails').addEventListener('click',()=>go('details'));
+
+  // pill toggles
+  document.querySelectorAll('.pill').forEach(p=>{
+    const cb = p.querySelector('input');
+    p.addEventListener('click', e=>{ e.preventDefault(); cb.checked=!cb.checked; p.classList.toggle('on', cb.checked); });
+  });
+
+  // care requirements as searchable chips
+  const reqs = ["Medication prompting","Diabetes care","Dementia care","Hoist transfer","Existing safeguarding plan","Safety and well-being check daily requirement","Palliative care","Personal care","Activities of daily living","Social outreach","Companionship","Light housekeeping","Meal preparation","Incontinence care","Stoma/catheter care","Safeguarding","Disability support care","OTHER"];
+  const grid = document.getElementById('reqGrid');
+  grid.innerHTML = reqs.map(r=>`<label class="chip"><input type="checkbox" name="referral_primary_care_requirements" value="${r}">${r}</label>`).join('');
+  grid.querySelectorAll('.chip').forEach(c=>{
+    const cb=c.querySelector('input');
+    c.addEventListener('click', e=>{ e.preventDefault(); cb.checked=!cb.checked; c.classList.toggle('on', cb.checked); });
+  });
+</script>
+</body>
+</html>

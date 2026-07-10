@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Redesign Concept</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B;
+    --line:#e6eaec; --soft-green:rgba(81,191,157,.10);
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Prompt',sans-serif;color:var(--ink);margin:0;background:#fff;}
+  h1,h2,h3,h4,h5,h6{font-weight:600;}
+
+  .concept-bar{background:var(--ink);color:#fff;font-size:.8rem;padding:.45rem 1rem;text-align:center;}
+  .concept-bar .badge{background:var(--brand-green);font-weight:600;}
+
+  .login-wrap{display:flex;min-height:100vh;}
+
+  /* ── brand side ── */
+  .brand-side{
+    flex:1.1;position:relative;overflow:hidden;color:#fff;
+    background:#0e4d4d;
+    display:flex;flex-direction:column;justify-content:space-between;padding:3rem 3.2rem;
+  }
+  .brand-side::before{content:"";position:absolute;inset:0;background:url('assets/awy-brand-bg.png') center/cover no-repeat;z-index:0;}
+  .brand-side::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(14,77,77,.28) 0%, rgba(14,77,77,.62) 100%);z-index:0;}
+  .brand-side > *{position:relative;z-index:1;}
+  .brand-side .top img{height:60px;width:auto;}
+  .brand-side .hero{position:relative;z-index:1;max-width:460px;}
+  .brand-side .hero h1{font-size:2.3rem;line-height:1.15;margin:0 0 1rem;text-shadow:0 1px 10px rgba(0,0,0,.22);}
+  .brand-side .hero p{font-size:1.02rem;color:rgba(255,255,255,.82);line-height:1.6;margin:0 0 2rem;text-shadow:0 1px 8px rgba(0,0,0,.2);}
+  .feat{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;font-size:.95rem;color:rgba(255,255,255,.92);text-shadow:0 1px 8px rgba(0,0,0,.2);}
+  .feat .fic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;flex:none;backdrop-filter:blur(2px);}
+  .brand-side .foot{position:relative;z-index:1;font-size:.82rem;color:rgba(255,255,255,.65);}
+
+  /* ── form side ── */
+  .form-side{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;background:#f7f9f9;}
+  .form-card{width:100%;max-width:420px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 30px rgba(19,56,75,.07);padding:2.2rem;}
+  .form-card .mobile-logo{display:none;text-align:center;margin-bottom:1.2rem;}
+  .form-card h2{font-size:1.5rem;margin:0 0 .35rem;}
+  .form-card .sub{color:var(--grey);font-size:.92rem;margin:0 0 1.5rem;}
+
+  .seg{display:flex;background:#eef1f2;border-radius:11px;padding:4px;margin-bottom:1.5rem;}
+  .seg button{flex:1;border:none;background:none;padding:.55rem;border-radius:8px;font-weight:600;font-size:.9rem;color:var(--grey);cursor:pointer;font-family:'Prompt',sans-serif;}
+  .seg button.on{background:#fff;color:var(--brand-green-dark);box-shadow:0 1px 3px rgba(19,56,75,.1);}
+
+  .form-label{font-weight:500;font-size:.85rem;margin-bottom:.35rem;}
+  .form-control{border-color:var(--line);border-radius:10px;padding:.65rem .85rem;font-size:.95rem;}
+  .form-control:focus{border-color:var(--brand-green);box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+  .pw-wrap{position:relative;}
+  .pw-wrap .toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--grey);cursor:pointer;}
+
+  .btn-brand{background:var(--brand-green);border:none;color:#fff;border-radius:10px;padding:.7rem;font-weight:600;width:100%;font-size:.98rem;}
+  .btn-brand:hover{background:var(--brand-green-dark);color:#fff;}
+  .link{color:var(--brand-green-dark);text-decoration:none;font-weight:500;font-size:.86rem;}
+  .link:hover{text-decoration:underline;}
+
+  .divider{display:flex;align-items:center;gap:.8rem;color:var(--grey);font-size:.8rem;margin:1.3rem 0;}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  /* provider-correct social buttons (white, real logos) */
+  .btn-social{display:flex;align-items:center;justify-content:center;gap:.65rem;width:100%;background:#fff;border:1px solid #dadce0;border-radius:10px;padding:.65rem;font-weight:500;font-size:.92rem;color:#3c4043;cursor:pointer;margin-bottom:.7rem;font-family:'Prompt',sans-serif;}
+  .btn-social:hover{background:#f8f9fa;border-color:#c6cacd;}
+  .btn-social svg{width:18px;height:18px;flex:none;}
+
+  .secure-note{display:flex;align-items:center;justify-content:center;gap:.4rem;color:var(--grey);font-size:.78rem;margin-top:1.3rem;}
+  .secure-note i{color:var(--brand-green-dark);}
+
+  .help-foot{text-align:center;margin-top:1.4rem;color:var(--grey);font-size:.82rem;}
+  .help-foot b{color:var(--ink);}
+
+  @media (max-width:991.98px){
+    .login-wrap{flex-direction:column;}
+    .brand-side{flex:none;padding:1.6rem;}
+    .brand-side .hero,.brand-side .foot{display:none;}
+    .brand-side .top{text-align:center;}
+    .brand-side .top img{height:46px;}
+    .form-side{flex:1;background:#f7f9f9;}
+  }
+  @media (max-width:420px){
+    .form-card{padding:1.5rem;border:none;box-shadow:none;background:transparent;}
+  }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <!-- BRAND SIDE -->
+  <div class="brand-side">
+    <div class="top"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou"></div>
+    <div class="hero">
+      <h1>Care planning, all in one place.</h1>
+      <p>Securely manage client care plans, assessments and approvals — from intake to sign-off.</p>
+      <div class="feat"><div class="fic"><i class="fas fa-shield-halved"></i></div> Secure, role-based access</div>
+      <div class="feat"><div class="fic"><i class="fas fa-file-signature"></i></div> Digital signatures &amp; approvals</div>
+      <div class="feat"><div class="fic"><i class="fas fa-clipboard-check"></i></div> Assessments &amp; reassessments</div>
+    </div>
+    <div class="foot">&copy; 2026 Allwayswithyou. Transforming Care Plan Management for Healthcare Excellence</div>
+  </div>
+
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-card">
+      <div class="mobile-logo"><img src="assets/logos/ALWAYS_logo_horiz_RGB_POS.svg" alt="Allwayswithyou" style="height:42px;"></div>
+      <h2 id="formTitle">Welcome back</h2>
+      <p class="sub" id="formDescription">Sign in to access the care management system</p>
+
+      <!-- mode toggle -->
+      <div class="seg">
+        <button type="button" id="signInModeBtn" class="on">Sign In</button>
+        <button type="button" id="signUpModeBtn">Sign Up</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <form id="emailLoginForm">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="you@allwayswithyou.ie" required>
+        </div>
+        <div class="mb-2">
+          <label for="password" class="form-label">Password</label>
+          <div class="pw-wrap">
+            <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+            <button type="button" class="toggle" data-pw="password"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="text-end mb-3"><a href="#" id="forgotPasswordLink" class="link">Forgot password?</a></div>
+        <button type="submit" id="emailSignInBtn" class="btn-brand"><i class="fas fa-arrow-right-to-bracket me-2"></i>Sign in</button>
+      </form>
+
+      <!-- SIGN UP -->
+      <form id="emailSignUpForm" style="display:none;">
+        <div class="mb-3">
+          <label for="signupEmail" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="signupEmail" name="signupEmail" required>
+        </div>
+        <div class="mb-3">
+          <label for="signupPassword" class="form-label">Password</label>
+          <div class="pw-wrap">
+            <input type="password" class="form-control" id="signupPassword" name="signupPassword" required minlength="6">
+            <button type="button" class="toggle" data-pw="signupPassword"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="form-text">At least 6 characters</div>
+        </div>
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="6">
+        </div>
+        <button type="submit" id="emailSignUpBtn" class="btn-brand"><i class="fas fa-user-plus me-2"></i>Create account</button>
+      </form>
+
+      <!-- FORGOT -->
+      <form id="forgotPasswordForm" style="display:none;">
+        <div class="mb-3">
+          <label for="resetEmail" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="resetEmail" name="resetEmail" required>
+          <div class="form-text">We'll email you a reset link</div>
+        </div>
+        <button type="submit" id="sendResetBtn" class="btn-brand"><i class="fas fa-paper-plane me-2"></i>Send reset link</button>
+        <div class="text-center mt-3"><a href="#" id="backToSignInLink" class="link">Back to sign in</a></div>
+      </form>
+
+      <div id="successAlert" class="alert alert-success mt-3" style="display:none;"><i class="fas fa-check-circle me-2"></i><span id="successMessage"></span></div>
+      <div id="errorAlert" class="alert alert-danger mt-3" style="display:none;"><i class="fas fa-triangle-exclamation me-2"></i><span id="errorMessage"></span></div>
+
+      <div id="loadingState" class="text-center my-3" style="display:none;">
+        <div class="spinner-border" style="color:var(--brand-green);" role="status"></div>
+        <p class="mt-2 text-muted mb-0">Authenticating…</p>
+      </div>
+
+      <div id="socialDivider" class="divider">or continue with</div>
+
+      <div id="socialButtons">
+        <button id="googleSignInBtn" class="btn-social">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span id="googleBtnText">Sign in with Google</span>
+        </button>
+        <button id="microsoftSignInBtn" class="btn-social">
+          <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg>
+          <span id="microsoftBtnText">Sign in with Microsoft</span>
+        </button>
+      </div>
+
+      <div class="secure-note"><i class="fas fa-lock"></i> Secure authentication powered by Google Firebase</div>
+    </div>
+
+    <div class="help-foot">Need help? Contact your system administrator · <b>Care Plan Manager v2.4.1</b></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // mockup-only: demonstrate mode switching + password reveal (production keeps the real Firebase script)
+  const $ = id => document.getElementById(id);
+  function setSeg(on){ $('signInModeBtn').classList.toggle('on', on==='in'); $('signUpModeBtn').classList.toggle('on', on==='up'); }
+  function show(formId, social, title, desc){
+    ['emailLoginForm','emailSignUpForm','forgotPasswordForm'].forEach(f=>$(f).style.display = f===formId?'block':'none');
+    $('socialDivider').style.display = social?'flex':'none';
+    $('socialButtons').style.display = social?'block':'none';
+    $('formTitle').textContent = title; $('formDescription').textContent = desc;
+  }
+  $('signInModeBtn').onclick = ()=>{ setSeg('in'); show('emailLoginForm', true, 'Welcome back', 'Sign in to access the care management system'); $('googleBtnText').textContent='Sign in with Google'; $('microsoftBtnText').textContent='Sign in with Microsoft'; };
+  $('signUpModeBtn').onclick = ()=>{ setSeg('up'); show('emailSignUpForm', true, 'Create your account', 'Create your account to access the care management system'); $('googleBtnText').textContent='Sign up with Google'; $('microsoftBtnText').textContent='Sign up with Microsoft'; };
+  $('forgotPasswordLink').onclick = e=>{ e.preventDefault(); setSeg(''); show('forgotPasswordForm', false, 'Reset password', 'Reset your password to regain access'); };
+  $('backToSignInLink').onclick = e=>{ e.preventDefault(); $('signInModeBtn').click(); };
+  document.querySelectorAll('.toggle').forEach(b=>b.onclick=()=>{ const i=$(b.dataset.pw); const on=i.type==='password'; i.type=on?'text':'password'; b.querySelector('i').className=on?'fas fa-eye-slash':'fas fa-eye'; });
+</script>
+</body>
+</html>

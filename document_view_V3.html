@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documents — Redesign</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B; --line:#e6eaec; --page:#f4f6f7; --soft-green:rgba(81,191,157,.10); --blue:#1B75BC; --orange:#F68C3D; --carmine:#DA2E72; }
+  *{box-sizing:border-box;}
+  body{ font-family:'Prompt',sans-serif; color:var(--ink); background:var(--page); margin:0; display:flex; flex-direction:column; min-height:100vh; }
+  h1,h2,h3,h4,h5,h6{ font-weight:600; color:var(--ink); }
+  .cpm-navbar{ background:var(--ink); padding:.45rem 0; position:relative; z-index:1030; }
+  .cpm-navbar .navbar-brand{ padding:0; margin-right:1.4rem; display:flex; align-items:center; }
+  .cpm-navbar .navbar-toggler{ border:1px solid rgba(255,255,255,.25); color:#fff; padding:.35rem .6rem; }
+  .cpm-navbar .navbar-toggler:focus{ box-shadow:none; }
+  .cpm-navbar .nav-link{ color:rgba(255,255,255,.85)!important; font-weight:500; font-size:.92rem; padding:.5rem .8rem!important; border-radius:8px; display:flex; align-items:center; }
+  .cpm-navbar .nav-link:hover{ color:#fff!important; background:rgba(255,255,255,.08); }
+  .cpm-dropdown{ border:1px solid var(--line); border-radius:10px; padding:.35rem; box-shadow:0 12px 32px rgba(19,56,75,.18); min-width:224px; margin-top:.4rem; }
+  .cpm-dropdown .dropdown-item{ border-radius:7px; padding:.5rem .7rem; display:flex; align-items:center; gap:.65rem; color:var(--ink); font-size:.9rem; }
+  .cpm-dropdown .dropdown-item i{ color:var(--brand-green-dark); width:18px; text-align:center; }
+  .cpm-dropdown .dropdown-item:hover{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-navbar .avatar{ width:30px; height:30px; border-radius:50%; background:var(--brand-green); color:#fff; display:grid; place-items:center; font-size:.74rem; font-weight:700; flex:none; }
+  .cpm-navbar .dropdown-toggle::after{ margin-left:.45rem; opacity:.55; }
+
+  .crumb{ padding:.9rem 0 .2rem; }
+  .crumb a{ color:var(--grey); text-decoration:none; font-size:.86rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; }
+  .crumb a:hover{ color:var(--brand-green-dark); }
+  .client-header{ background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(19,56,75,.05); margin-top:.3rem; }
+  .ch-main{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding:1rem 1.2rem; }
+  .ch-avatar{ width:54px; height:54px; border-radius:14px; background:linear-gradient(135deg,var(--brand-green),var(--brand-green-dark)); color:#fff; display:grid; place-items:center; font-size:1.2rem; font-weight:700; flex:none; }
+  .ch-id h1{ font-size:1.35rem; margin:0; line-height:1.15; }
+  .ch-meta{ display:flex; flex-wrap:wrap; gap:.3rem .9rem; color:var(--grey); font-size:.86rem; margin-top:.2rem; }
+  .ch-meta b{ color:var(--ink); font-weight:600; }
+
+  .panel{ background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(19,56,75,.04); margin-top:1rem; }
+  .panel-head{ padding:.9rem 1.2rem; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .panel-head h2{ font-size:1rem; margin:0; display:flex; align-items:center; gap:.5rem; }
+  .panel-head h2 i{ color:var(--brand-green-dark); }
+
+  .btn{ border-radius:9px; font-weight:500; }
+  .btn-brand{ background:var(--brand-green); border-color:var(--brand-green); color:#fff; }
+  .btn-brand:hover{ background:var(--brand-green-dark); border-color:var(--brand-green-dark); color:#fff; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); color:var(--ink); }
+  .btn-ghost:hover{ background:#f2f5f6; color:var(--ink); }
+  .btn-sm{ font-size:.84rem; padding:.3rem .65rem; }
+
+  .doc-item{ display:flex; align-items:center; gap:1rem; padding:1rem 1.2rem; border-bottom:1px solid var(--line); }
+  .doc-item:last-child{ border-bottom:none; }
+  .doc-item:hover{ background:#f8fbfa; }
+  .doc-fi{ width:46px; height:46px; border-radius:11px; background:var(--soft-green); color:var(--brand-green-dark); display:grid; place-items:center; font-size:1.25rem; flex:none; }
+  .doc-info{ min-width:0; flex:1; }
+  .doc-name{ font-weight:600; }
+  .doc-sub{ font-size:.82rem; color:var(--grey); margin-top:.1rem; }
+  .pill{ display:inline-flex; align-items:center; gap:.35rem; border-radius:20px; padding:.18rem .6rem; font-size:.74rem; font-weight:700; }
+  .sb-green{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .sb-blue{ background:rgba(27,117,188,.12); color:#1462a0; }
+
+  .empty{ text-align:center; padding:3rem 1.5rem; }
+  .empty .ic{ width:64px; height:64px; border-radius:16px; background:var(--soft-green); color:var(--brand-green-dark); display:grid; place-items:center; font-size:1.6rem; margin:0 auto 1rem; }
+  .empty h5{ color:var(--ink); } .empty p{ color:var(--grey); }
+
+  .site-footer{ background:var(--ink); color:rgba(255,255,255,.7); border-top:3px solid var(--brand-green); margin-top:auto; }
+  .site-footer .footer-inner{ display:flex; flex-wrap:wrap; gap:2rem 3rem; justify-content:space-between; padding:2.4rem 0 1.6rem; }
+  .site-footer .footer-brand{ max-width:320px; } .site-footer .footer-brand img{ height:64px; width:auto; }
+  .site-footer .footer-brand p{ margin:.8rem 0 0; font-size:.85rem; line-height:1.5; color:rgba(255,255,255,.6); }
+  .site-footer .footer-col h6{ color:#fff; font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin:0 0 1rem; }
+  .site-footer .footer-links{ display:flex; flex-direction:column; gap:.7rem; }
+  .site-footer .footer-links a{ color:rgba(255,255,255,.7); text-decoration:none; font-size:.88rem; display:inline-flex; align-items:center; gap:.55rem; width:fit-content; }
+  .site-footer .footer-links a i{ color:var(--brand-green); font-size:.82rem; width:16px; text-align:center; }
+  .site-footer .footer-bar{ border-top:1px solid rgba(255,255,255,.1); display:flex; flex-wrap:wrap; gap:.6rem 1.5rem; align-items:center; justify-content:space-between; padding:1.1rem 0; font-size:.82rem; color:rgba(255,255,255,.55); }
+  .site-footer .footer-bar .chip-v{ background:rgba(81,191,157,.16); color:#7fd9c0; border-radius:6px; padding:.12rem .5rem; font-weight:600; font-size:.76rem; }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg cpm-navbar">
+  <div class="container-xxl">
+    <a class="navbar-brand" href="care_plan_search_V3.html"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou" style="height:46px;width:auto;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpmNav"><i class="fas fa-bars"></i></button>
+    <div class="collapse navbar-collapse" id="cpmNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-users me-2"></i>Clients</a>
+          <ul class="dropdown-menu cpm-dropdown">
+            <li><a class="dropdown-item" href="onboarding_V3.html"><i class="fas fa-user-plus"></i> Add New Client</a></li>
+            <li><a class="dropdown-item" href="care_plan_search_V3.html"><i class="fas fa-folder-open"></i> Care Plan Manager</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="report_pages_V3.html"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="settings_V3.html"><i class="fas fa-gear me-2"></i>Settings</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="avatar me-2">GO</span> Ger O'Keeffe</a>
+          <ul class="dropdown-menu dropdown-menu-end cpm-dropdown">
+            <li><a class="dropdown-item" href="user_profile_V3.html"><i class="fas fa-id-badge"></i> My Profile &amp; Access</a></li>
+            <li><a class="dropdown-item" href="release_notes_V3.html"><i class="fas fa-bullhorn"></i> Release Notes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xxl" style="padding-bottom:2rem;">
+  <div class="crumb"><a href="client_profile_V3.html"><i class="fas fa-arrow-left"></i> Colm Bracken</a></div>
+
+  <div class="client-header">
+    <div class="ch-main">
+      <div class="ch-avatar">CB</div>
+      <div class="ch-id">
+        <h1>Colm Bracken</h1>
+        <div class="ch-meta"><span>ID <b>75433</b></span><span>DOB <b>16/12/1937</b></span><span>Branch <b>Tullamore</b></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2><i class="fas fa-clipboard-check" id="hIcon"></i> <span id="hTitle">Assessment documents</span></h2>
+      <a href="assessment_pages_V3.html#sa" class="btn btn-brand btn-sm" id="newBtn"><i class="fas fa-plus me-1"></i> New assessment</a>
+    </div>
+    <div id="docList"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container-xxl">
+    <div class="footer-inner">
+      <div class="footer-brand"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou"><p>Transforming Care Plan Management for Healthcare Excellence</p></div>
+      <div class="footer-col"><h6>Legal</h6><div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="#"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</a>
+        <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+        <a href="#"><i class="fas fa-building"></i> Company Information</a>
+      </div></div>
+    </div>
+    <div class="footer-bar"><span>&copy; 2026 Allwayswithyou. All rights reserved.</span><span>Care Plan Manager <span class="chip-v">v2.4.1</span></span></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const MODE = {
+    assessments: {
+      icon:'fa-clipboard-check', title:'Assessment documents', newLabel:'New assessment', newHref:'assessment_pages_V3.html#sa',
+      docs:[
+        {name:'Home Assessment.pdf', sub:'Home Assessment · 04/03/2026 · Ger O\u2019Keeffe', tag:'HA'},
+        {name:'Self-Assessment.pdf', sub:'Self-Assessment · 02/03/2026 · Mary Bracken', tag:'SA'},
+      ]
+    },
+    support: {
+      icon:'fa-folder-open', title:'Support documents', newLabel:'Upload document', newHref:'#',
+      docs:[]
+    },
+    careplan: {
+      icon:'fa-file-medical', title:'Care plan versions', newLabel:'Edit latest version', newHref:'client_profile_V3.html#careplan',
+      docs:[
+        {name:'Care Plan v2 — Final', sub:'Fully approved · 06/03/2026', tag:'FINAL'},
+        {name:'Care Plan v1 — Draft', sub:'Superseded · 01/03/2026', tag:'v1'},
+      ]
+    }
+  };
+  const mode = (location.hash||'#assessments').replace('#','');
+  const cfg = MODE[mode] || MODE.assessments;
+  document.getElementById('hIcon').className = 'fas ' + cfg.icon;
+  document.getElementById('hTitle').textContent = cfg.title;
+  const nb = document.getElementById('newBtn'); nb.href = cfg.newHref; nb.querySelector('span')||0;
+  nb.innerHTML = '<i class="fas fa-'+(mode==='support'?'upload':(mode==='careplan'?'edit':'plus'))+' me-1"></i> '+cfg.newLabel;
+
+  const list = document.getElementById('docList');
+  if (cfg.docs.length){
+    list.innerHTML = cfg.docs.map(d=>`
+      <div class="doc-item">
+        <div class="doc-fi"><i class="fas ${mode==='careplan'?'fa-file-lines':'fa-file-pdf'}"></i></div>
+        <div class="doc-info"><div class="doc-name">${d.name}</div><div class="doc-sub">${d.sub}</div></div>
+        <span class="pill sb-blue">${d.tag}</span>
+        <div class="d-flex gap-2"><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-eye me-1"></i> View</a><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-download me-1"></i> ${mode==='careplan'?'PDF':'Download'}</a></div>
+      </div>`).join('');
+  } else {
+    list.innerHTML = `<div class="empty"><div class="ic"><i class="fas ${cfg.icon}"></i></div><h5>No ${mode==='support'?'support':'assessment'} documents yet</h5><p>Documents will appear here once uploaded for this client.</p><a href="${cfg.newHref}" class="btn btn-brand"><i class="fas fa-${mode==='support'?'upload':'plus'} me-1"></i> ${cfg.newLabel}</a></div>`;
+  }
+</script>
+</body>
+</html>

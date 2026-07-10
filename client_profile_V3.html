@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Profile — Redesign Concept</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B;
+    --blue:#1B75BC; --orange:#F68C3D; --carmine:#DA2E72; --line:#e6eaec; --page:#f4f6f7;
+    --soft-green:rgba(81,191,157,.10);
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Prompt',sans-serif;color:var(--ink);background:var(--page);margin:0;display:flex;flex-direction:column;min-height:100vh;}
+  h1,h2,h3,h4,h5,h6{font-weight:600;color:var(--ink);}
+
+  /* navbar (same system as the manager page) */
+  .cpm-navbar{background:var(--ink);padding:.45rem 0;position:relative;z-index:1030;}
+  .cpm-navbar .navbar-brand{padding:0;margin-right:1.4rem;display:flex;align-items:center;}
+  .cpm-navbar .navbar-toggler{border:1px solid rgba(255,255,255,.25);color:#fff;padding:.35rem .6rem;}
+  .cpm-navbar .navbar-toggler:focus{box-shadow:none;}
+  .cpm-navbar .nav-link{color:rgba(255,255,255,.85)!important;font-weight:500;font-size:.92rem;padding:.5rem .8rem!important;border-radius:8px;display:flex;align-items:center;}
+  .cpm-navbar .nav-link:hover{color:#fff!important;background:rgba(255,255,255,.08);}
+  .cpm-navbar .nav-link.active{color:#fff!important;background:rgba(81,191,157,.20);}
+  .cpm-navbar .dropdown-toggle::after{margin-left:.45rem;opacity:.55;}
+  .cpm-dropdown{border:1px solid var(--line);border-radius:10px;padding:.35rem;box-shadow:0 12px 32px rgba(19,56,75,.18);min-width:224px;margin-top:.4rem;}
+  .cpm-dropdown .dropdown-item{border-radius:7px;padding:.5rem .7rem;display:flex;align-items:center;gap:.65rem;color:var(--ink);font-size:.9rem;}
+  .cpm-dropdown .dropdown-item i{color:var(--brand-green-dark);width:18px;text-align:center;}
+  .cpm-dropdown .dropdown-item:hover{background:var(--soft-green);color:var(--brand-green-dark);}
+  .cpm-dropdown .dropdown-item.active,.cpm-dropdown .dropdown-item:active{ background:var(--soft-green); color:var(--brand-green-dark); }
+  .cpm-navbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--brand-green);color:#fff;display:grid;place-items:center;font-size:.74rem;font-weight:700;flex:none;}
+
+  .crumb{padding:.9rem 0 .2rem;}
+  .crumb a{color:var(--grey);text-decoration:none;font-size:.86rem;font-weight:500;display:inline-flex;align-items:center;gap:.4rem;}
+  .crumb a:hover{color:var(--brand-green-dark);}
+
+  /* ── sticky client context header (now carries key contact info) ── */
+  .client-header{position:sticky;top:0;z-index:1020;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(19,56,75,.05);margin-top:.4rem;}
+  .ch-main{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:1rem 1.2rem;}
+  .ch-avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--brand-green),var(--brand-green-dark));color:#fff;display:grid;place-items:center;font-size:1.3rem;font-weight:700;flex:none;}
+  .ch-id h1{font-size:1.4rem;margin:0;line-height:1.15;}
+  .ch-meta{display:flex;flex-wrap:wrap;gap:.3rem 1.1rem;color:var(--grey);font-size:.86rem;margin-top:.25rem;}
+  .ch-meta span{display:inline-flex;align-items:center;gap:.35rem;}
+  .ch-meta i{color:var(--brand-green-dark);font-size:.8rem;width:14px;text-align:center;}
+  .ch-meta b{color:var(--ink);font-weight:600;}
+  .ch-actions{margin-left:auto;display:flex;align-items:center;gap:.6rem;}
+
+  .badges-row{display:flex;flex-wrap:wrap;gap:.5rem;padding:0 1.2rem 1rem;}
+  .sbadge{display:inline-flex;align-items:center;gap:.4rem;border-radius:20px;padding:.28rem .7rem;font-size:.8rem;font-weight:600;}
+  .sb-green{background:var(--soft-green);color:var(--brand-green-dark);}
+  .sb-amber{background:rgba(246,140,61,.14);color:#b6650f;}
+  .sb-grey{background:#eef1f2;color:var(--grey);}
+  .sb-blue{background:rgba(27,117,188,.12);color:#1462a0;}
+
+  .btn{border-radius:9px;font-weight:500;white-space:nowrap;}
+  .btn-brand{background:var(--brand-green);border-color:var(--brand-green);color:#fff;}
+  .btn-brand:hover{background:var(--brand-green-dark);border-color:var(--brand-green-dark);color:#fff;}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink);}
+  .btn-ghost:hover{background:#f2f5f6;color:var(--ink);}
+
+  /* ── horizontal tabs ── */
+  .tabs-wrap{margin-top:1rem;border-bottom:1px solid var(--line);}
+  .ctabs{display:flex;gap:.2rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .ctabs::-webkit-scrollbar{display:none;}
+  .ctab{border:none;background:none;padding:.85rem 1.05rem;font-size:.94rem;font-weight:600;color:var(--grey);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;display:inline-flex;align-items:center;gap:.5rem;font-family:'Prompt',sans-serif;}
+  .ctab:hover{color:var(--ink);}
+  .ctab.active{color:var(--brand-green-dark);border-bottom-color:var(--brand-green);}
+  .ctab .pip{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .3rem;border-radius:10px;background:#eef1f2;color:var(--grey);font-size:.7rem;font-weight:700;}
+  .ctab.active .pip{background:var(--brand-green);color:#fff;}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(19,56,75,.04);}
+  .panel + .panel{margin-top:1rem;}
+  .panel-head{padding:.9rem 1.2rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+  .panel-head h2{font-size:1rem;margin:0;display:flex;align-items:center;gap:.5rem;}
+  .panel-head h2 i{color:var(--brand-green-dark);}
+  .section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--grey);font-weight:600;margin:0 0 1rem;display:flex;align-items:center;gap:.5rem;}
+  .section-title i{color:var(--brand-green-dark);}
+
+  .form-label{font-weight:500;color:var(--ink);font-size:.8rem;margin-bottom:.3rem;}
+  .form-control,.form-select{border-color:var(--line);border-radius:9px;padding:.5rem .75rem;font-size:.92rem;}
+  .form-control:focus,.form-select:focus{border-color:var(--brand-green);box-shadow:0 0 0 .2rem rgba(81,191,157,.18);}
+  .form-control[readonly]{background:#f7f9f9;color:var(--grey);}
+
+  /* pill toggles (Days / Hours — now editable) */
+  .pill{display:inline-flex;align-items:center;cursor:pointer;user-select:none;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:.4rem .75rem;font-size:.88rem;font-weight:500;}
+  .pill input{display:none;}
+  .pill.on{background:var(--soft-green);border-color:var(--brand-green);color:var(--brand-green-dark);}
+  .pill.on::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:.72rem;margin-right:.4rem;}
+  .pills{display:flex;flex-wrap:wrap;gap:.45rem;}
+  .hint{font-size:.76rem;color:var(--grey);margin-top:.5rem;}
+
+  .doc-row-item{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.2rem;border-bottom:1px solid var(--line);}
+  .doc-row-item:last-child{border-bottom:none;}
+  .doc-row-item .fi{width:40px;height:40px;border-radius:10px;background:var(--soft-green);color:var(--brand-green-dark);display:grid;place-items:center;flex:none;}
+  .doc-row-item .meta{flex:1;min-width:0;}
+  .doc-row-item .meta .t{font-weight:600;font-size:.92rem;}
+  .doc-row-item .meta .s{font-size:.8rem;color:var(--grey);}
+  .doc-row-item .acts{display:flex;gap:.4rem;flex-wrap:wrap;}
+  .empty-state{padding:2rem 1.2rem;text-align:center;color:var(--grey);}
+  .empty-state i{font-size:1.6rem;color:#c2cace;margin-bottom:.5rem;display:block;}
+
+  /* assessment/new launcher */
+  .add-assessment-btn{display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--brand-green-dark);padding:.4rem .7rem;font-size:.86rem;font-weight:600;cursor:pointer;font-family:'Prompt',sans-serif;}
+  .add-assessment-btn:hover,.add-assessment-btn[aria-expanded="true"]{background:var(--soft-green);border-color:var(--brand-green);}
+  .assess-menu{--bs-dropdown-min-width:240px;border:1px solid var(--line);border-radius:10px;padding:.35rem;box-shadow:0 12px 32px rgba(19,56,75,.16);font-size:.86rem;margin-top:.5rem!important;}
+  .assess-menu .dropdown-header{font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#9aa4a9;padding:.3rem .6rem;}
+  .assess-menu .dropdown-item{border-radius:7px;padding:.55rem .65rem;display:flex;align-items:center;gap:.6rem;color:var(--ink);font-size:.9rem;}
+  .assess-menu .dropdown-item:hover{background:var(--soft-green);color:var(--brand-green-dark);}
+  .assess-menu .dropdown-item .tag{display:inline-grid;place-items:center;min-width:26px;height:20px;border-radius:5px;background:#eef1f2;color:var(--grey);font-size:.66rem;font-weight:700;}
+  .assess-menu .dropdown-item:hover .tag{background:var(--brand-green);color:#fff;}
+  /* New-assessment trigger: visible dropdown caret + a lift on hover so it clearly invites a click */
+  .btn-brand.dropdown-toggle{box-shadow:0 1px 2px rgba(19,56,75,.08);transition:box-shadow .15s,transform .15s;}
+  .btn-brand.dropdown-toggle:hover,.btn-brand.dropdown-toggle[aria-expanded="true"]{box-shadow:0 6px 16px rgba(81,191,157,.35);transform:translateY(-1px);}
+  .btn-brand.dropdown-toggle::after{vertical-align:.15em;}
+
+  /* care plan tab: editor + approval flow */
+  .md-toolbar{display:flex;gap:.2rem;flex-wrap:wrap;padding:.5rem .7rem;border-bottom:1px solid var(--line);background:#fbfcfc;}
+  .md-toolbar button{border:1px solid transparent;background:none;width:32px;height:30px;border-radius:7px;color:var(--grey);cursor:pointer;font-size:.85rem;}
+  .md-toolbar button:hover{background:#fff;border-color:var(--line);color:var(--ink);}
+  .md-editor{width:100%;border:none;padding:1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.6;color:var(--ink);resize:vertical;min-height:360px;}
+  .md-editor:focus{outline:none;}
+  .md-help{font-size:.78rem;color:var(--grey);padding:.6rem 1.2rem;border-top:1px solid var(--line);background:#fbfcfc;}
+  .md-help code{background:#eef1f2;border-radius:4px;padding:.05rem .3rem;color:var(--brand-green-dark);}
+
+  .flow{position:relative;padding-left:34px;}
+  .flow::before{content:"";position:absolute;left:13px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .step{position:relative;padding-bottom:1.2rem;}
+  .step:last-child{padding-bottom:0;}
+  .step .node{position:absolute;left:-34px;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;background:#fff;border:2px solid var(--line);color:#c2cace;}
+  .step.done .node{background:var(--brand-green-dark);border-color:var(--brand-green-dark);color:#fff;}
+  .step.current .node{background:var(--brand-green);border-color:var(--brand-green);color:#fff;box-shadow:0 0 0 4px var(--soft-green);}
+  .step .st-title{font-weight:600;font-size:.92rem;}
+  .step.pending .st-title{color:var(--grey);}
+  .step .st-time{font-size:.78rem;color:var(--grey);margin-top:.1rem;}
+
+  .recip{display:flex;align-items:center;gap:.7rem;border:1px solid var(--line);border-radius:11px;padding:.8rem;margin-bottom:.7rem;}
+  .recip .ic{width:36px;height:36px;border-radius:9px;background:var(--soft-green);color:var(--brand-green-dark);display:grid;place-items:center;flex:none;}
+  .recip .t{font-weight:600;font-size:.9rem;} .recip .s{font-size:.8rem;color:var(--grey);}
+  .recip .chk{margin-left:auto;}
+
+  .tabpane{display:none;}
+  .tabpane.show{display:block;}
+
+  /* footer */
+  .site-footer{background:var(--ink);color:rgba(255,255,255,.7);border-top:3px solid var(--brand-green);margin-top:auto;}
+  .site-footer .footer-inner{display:flex;flex-wrap:wrap;gap:2rem 3rem;justify-content:space-between;padding:2.4rem 0 1.6rem;}
+  .site-footer .footer-brand{max-width:300px;}
+  .site-footer .footer-brand img{height:64px;width:auto;}
+  .site-footer .footer-col h6{color:#fff;font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin:0 0 1rem;}
+  .site-footer .footer-links{display:flex;flex-direction:column;gap:.7rem;}
+  .site-footer .footer-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.88rem;display:inline-flex;align-items:center;gap:.55rem;width:fit-content;}
+  .site-footer .footer-links a i{color:var(--brand-green);font-size:.82rem;width:16px;text-align:center;}
+  .site-footer .footer-links a:hover{color:#fff;}
+  .site-footer .footer-brand p{margin:.8rem 0 0;font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.6);}
+  .site-footer .footer-bar{border-top:1px solid rgba(255,255,255,.1);display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:center;justify-content:space-between;padding:1.1rem 0;font-size:.82rem;color:rgba(255,255,255,.55);}
+  .site-footer .footer-bar .chip{background:rgba(81,191,157,.16);color:#7fd9c0;border-radius:6px;padding:.12rem .5rem;font-weight:600;font-size:.76rem;}
+
+  @media (max-width:767.98px){
+    .ch-actions{width:100%;margin-left:0;margin-top:.6rem;}
+    .ch-actions .btn-brand{flex:1;}
+  }
+</style>
+</head>
+<body>
+
+<!-- navbar -->
+<nav class="navbar navbar-expand-lg cpm-navbar">
+  <div class="container-xxl">
+    <a class="navbar-brand" href="care_plan_search_V3.html"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou" style="height:46px;width:auto;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpmNav"><i class="fas fa-bars"></i></button>
+    <div class="collapse navbar-collapse" id="cpmNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-users me-2"></i>Clients</a>
+          <ul class="dropdown-menu cpm-dropdown">
+            <li><a class="dropdown-item" href="onboarding_V3.html"><i class="fas fa-user-plus"></i> Add New Client</a></li>
+            <li><a class="dropdown-item" href="care_plan_search_V3.html"><i class="fas fa-folder-open"></i> Care Plan Manager</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="report_pages_V3.html"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
+        <li class="nav-item"><a class="nav-link" href="settings_V3.html"><i class="fas fa-gear me-2"></i>Settings</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><span class="avatar me-2">GO</span> Ger O'Keeffe</a>
+          <ul class="dropdown-menu dropdown-menu-end cpm-dropdown">
+            <li><a class="dropdown-item" href="user_profile_V3.html"><i class="fas fa-id-badge"></i> My Profile &amp; Access</a></li>
+            <li><a class="dropdown-item" href="release_notes_V3.html"><i class="fas fa-bullhorn"></i> Release Notes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xxl pb-5">
+
+  <div class="crumb"><a href="care_plan_search_V3.html"><i class="fas fa-arrow-left"></i> Care Plan Manager</a></div>
+
+  <!-- STICKY CLIENT CONTEXT HEADER — now carries key contact info at a glance -->
+  <div class="client-header">
+    <div class="ch-main">
+      <div class="ch-avatar">CB</div>
+      <div class="ch-id">
+        <h1>Colm Bracken</h1>
+        <div class="ch-meta">
+          <span>ID <b>75433</b></span>
+          <span>DOB <b>16/12/1937</b></span>
+          <span>Age <b>88</b></span>
+          <span>Branch <b>Tullamore</b></span>
+          <span><i class="fas fa-phone"></i> <b>086 123 4567</b></span>
+          <span><i class="fas fa-envelope"></i> <b>colm.bracken@example.ie</b></span>
+        </div>
+      </div>
+      <div class="ch-actions">
+        <button class="btn btn-brand" id="saveBtn"><i class="fas fa-save me-1"></i> Save Changes</button>
+      </div>
+    </div>
+    <div class="badges-row">
+      <span class="sbadge sb-green"><i class="fas fa-circle" style="font-size:.5rem"></i> Active</span>
+      <span class="sbadge sb-green"><i class="fas fa-check-circle"></i> Care Plan Approved · 06/03/2026</span>
+      <span class="sbadge sb-green"><i class="fas fa-file-signature"></i> E-Signature: Fully Signed</span>
+      <span class="sbadge sb-amber"><i class="fas fa-redo"></i> Reassessment due 06/09/2026</span>
+    </div>
+
+    <!-- tabs -->
+    <div class="tabs-wrap">
+      <div class="ctabs" id="ctabs">
+        <button class="ctab active" data-tab="profile"><i class="fas fa-user"></i> Profile</button>
+        <button class="ctab" data-tab="intake"><i class="fas fa-clipboard-list"></i> Intake</button>
+        <button class="ctab" data-tab="assessments"><i class="fas fa-clipboard-check"></i> Assessments <span class="pip">2</span></button>
+        <button class="ctab" data-tab="careplan"><i class="fas fa-file-medical"></i> Care Plan</button>
+        <button class="ctab" data-tab="support"><i class="fas fa-folder-open"></i> Support Docs</button>
+        <button class="ctab" data-tab="reassessment"><i class="fas fa-redo"></i> Reassessment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: PROFILE ============ -->
+  <div class="tabpane show" data-pane="profile">
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-user"></i> Client information</div>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Client Name *</label><input class="form-control" value="Colm Bracken"></div>
+        <div class="col-md-4"><label class="form-label">Client Initials</label><input class="form-control" value="CB"></div>
+        <div class="col-md-4"><label class="form-label">Client ID</label><input class="form-control" value="75433"></div>
+        <div class="col-md-6"><label class="form-label">Address</label><input class="form-control" value="12 Canal View, Tullamore"></div>
+        <div class="col-md-3"><label class="form-label">Eircode</label><input class="form-control" value="R35 X2Y8"></div>
+        <div class="col-md-3"><label class="form-label">Date of Birth</label><input type="date" class="form-control" value="1937-12-16"></div>
+        <div class="col-md-4"><label class="form-label">Phone</label><input class="form-control" value="086 123 4567"></div>
+        <div class="col-md-4"><label class="form-label">Email</label><input class="form-control" value="colm.bracken@example.ie"></div>
+        <div class="col-md-4"><label class="form-label">Gender</label><select class="form-select"><option>Male</option><option>Female</option><option>Other</option></select></div>
+        <div class="col-md-4"><label class="form-label">Days Waiting</label><input type="number" class="form-control" value="0"></div>
+        <div class="col-md-4"><label class="form-label">First Contact Date</label><input type="date" class="form-control" value="2026-02-28"></div>
+      </div>
+    </div>
+
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-heart-pulse"></i> Activity status</div>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Activity Status</label><select class="form-select"><option>Active</option><option>Suspended</option><option>End of Service</option></select></div>
+        <div class="col-md-8"><label class="form-label">Reason for Status Change</label><input class="form-control" placeholder="If applicable"></div>
+      </div>
+    </div>
+
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-users"></i> Nominated contact</div>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Support Person</label><input class="form-control" value="Mary Bracken"></div>
+        <div class="col-md-4"><label class="form-label">Contact Mobile</label><input class="form-control" value="086 987 6543"></div>
+        <div class="col-md-4"><label class="form-label">Support Email</label><input class="form-control" value="mary.bracken@example.ie"></div>
+      </div>
+    </div>
+
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-file-signature"></i> Consent</div>
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label d-block">Verbal Consent Received</label>
+          <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" checked style="min-width:2.6rem;min-height:1.4rem"><label class="form-check-label ms-1">Yes</label></div>
+        </div>
+        <div class="col-md-4"><label class="form-label">Consent Captured By</label><input class="form-control" value="Ger O'Keeffe"></div>
+        <div class="col-md-4"><label class="form-label">Date of Consent</label><input type="date" class="form-control" value="2026-02-28"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: INTAKE (intake + assessor merged) ============ -->
+  <div class="tabpane" data-pane="intake">
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-clipboard-list"></i> Intake</div>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Branch</label><select class="form-select"><option>Tullamore</option><option>Athlone</option><option>Mullingar</option></select></div>
+        <div class="col-md-4"><label class="form-label">Status</label><select class="form-select"><option>Active</option><option>Pending</option><option>On Hold</option><option>Completed</option></select></div>
+        <div class="col-md-4"><label class="form-label">Funder</label><input class="form-control" value="HSE"></div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-md-7">
+          <label class="form-label">Days</label>
+          <div class="pills" data-name="days">
+            <label class="pill on"><input type="checkbox" checked value="Mn+BH">Mn+BH</label>
+            <label class="pill"><input type="checkbox" value="Mn–BH">Mn–BH</label>
+            <label class="pill"><input type="checkbox" value="Tu">Tu</label>
+            <label class="pill on"><input type="checkbox" checked value="We">We</label>
+            <label class="pill"><input type="checkbox" value="Th">Th</label>
+            <label class="pill on"><input type="checkbox" checked value="Fr">Fr</label>
+            <label class="pill"><input type="checkbox" value="Sa">Sa</label>
+            <label class="pill"><input type="checkbox" value="Su">Su</label>
+          </div>
+          <div class="hint"><b>Mn+BH</b> = Mondays <b>including</b> bank-holiday Mondays · <b>Mn–BH</b> = Mondays <b>excluding</b> bank holidays.</div>
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Hours</label>
+          <div class="pills" data-name="hours">
+            <label class="pill on"><input type="checkbox" checked value="8–11a">8–11a</label>
+            <label class="pill"><input type="checkbox" value="11–3p">11–3p</label>
+            <label class="pill"><input type="checkbox" value="3–6p">3–6p</label>
+            <label class="pill"><input type="checkbox" value="6–10p">6–10p</label>
+            <label class="pill"><input type="checkbox" value="ON">ON (overnight)</label>
+          </div>
+          <div class="hint">Care-visit time bands.</div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-12"><label class="form-label">Referral Primary Care Requirements</label><textarea class="form-control" rows="2">Assistance with daily living, mobility support, medication prompts.</textarea></div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-md-6"><label class="form-label">Intake Created Date</label><input class="form-control" value="28/02/2026 10:14" readonly></div>
+        <div class="col-md-6"><label class="form-label">Intake Updated Date</label><input class="form-control" value="04/03/2026 16:02" readonly></div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-4"><label class="form-label">Assessor Name</label><input class="form-control" value="Ger O'Keeffe"></div>
+        <div class="col-md-4"><label class="form-label">Assessor Phone</label><input class="form-control" value="057 900 0000"></div>
+        <div class="col-md-4"><label class="form-label">Assessor Email</label><input class="form-control" value="ger.okeeffe@allwayswithyou.ie"></div>
+        <div class="col-md-6"><label class="form-label">Reason for Assessment</label><textarea class="form-control" rows="2">Initial home care assessment following GP referral.</textarea></div>
+        <div class="col-md-6"><label class="form-label">Risk Mitigation Required</label><textarea class="form-control" rows="2">Falls risk — ensure clear walkways and grab rails.</textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: ASSESSMENTS ============ -->
+  <div class="tabpane" data-pane="assessments">
+    <div class="panel mt-3">
+      <div class="panel-head">
+        <h2><i class="fas fa-clipboard-check"></i> Assessments</h2>
+        <div class="dropdown">
+          <button class="btn btn-brand dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static"><i class="fas fa-plus me-1"></i> New</button>
+          <ul class="dropdown-menu dropdown-menu-end assess-menu">
+            <li><h6 class="dropdown-header">Start an assessment</h6></li>
+            <li><a class="dropdown-item" href="assessment_pages_V3.html#sa"><span class="tag">SA</span> Self-Assessment</a></li>
+            <li><a class="dropdown-item" href="assessment_pages_V3.html#ha"><span class="tag">HA</span> Home Assessment</a></li>
+            <li><a class="dropdown-item" href="assessment_pages_V3.html#ra"><span class="tag">RA</span> Reassessment</a></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="doc-row-item">
+          <div class="fi"><i class="fas fa-house-user"></i></div>
+          <div class="meta"><div class="t">Home Assessment</div><div class="s">Completed · 04/03/2026 · Ger O'Keeffe</div></div>
+          <div class="acts"><a href="document_view_V3.html#assessments" class="btn btn-ghost btn-sm"><i class="fas fa-eye me-1"></i> View</a></div>
+        </div>
+        <div class="doc-row-item">
+          <div class="fi"><i class="fas fa-user-check"></i></div>
+          <div class="meta"><div class="t">Self-Assessment</div><div class="s">Completed · 02/03/2026 · submitted by client</div></div>
+          <div class="acts"><a href="document_view_V3.html#assessments" class="btn btn-ghost btn-sm"><i class="fas fa-eye me-1"></i> View</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: CARE PLAN (document + edit + approval flow, replaces client_profile_V3.html#careplan) ============ -->
+  <div class="tabpane" data-pane="careplan">
+    <div class="panel mt-3">
+      <div class="panel-head">
+        <h2><i class="fas fa-file-medical"></i> Care plan document</h2>
+        <div class="d-flex align-items-center gap-2">
+          <span class="sbadge sb-amber"><i class="fas fa-pen"></i> Under review · v1</span>
+          <a href="document_view_V3.html#careplan" class="btn btn-ghost btn-sm"><i class="fas fa-clock-rotate-left me-1"></i> Version history</a>
+        </div>
+      </div>
+      <div class="md-toolbar">
+        <button title="Heading"><i class="fas fa-heading"></i></button>
+        <button title="Bold"><i class="fas fa-bold"></i></button>
+        <button title="Italic"><i class="fas fa-italic"></i></button>
+        <button title="List"><i class="fas fa-list-ul"></i></button>
+        <button title="Link"><i class="fas fa-link"></i></button>
+      </div>
+      <textarea class="md-editor" name="content"># Care Plan — Colm Bracken
+
+## Personal Care
+- Assistance with washing and dressing each morning
+- Medication prompting at 8:00 and 18:00
+
+## Mobility
+- Support with transfers; falls-risk precautions in place
+- Clear walkways, grab rails fitted
+
+## Nutrition
+- Meal preparation for lunch and evening meal
+- Monitor fluid intake</textarea>
+      <div class="md-help">Markdown: <code>**bold**</code> <code>*italic*</code> <code># Heading</code> <code>## Subheading</code> <code>- List item</code></div>
+      <div class="p-3" style="border-top:1px solid var(--line);">
+        <label class="form-label">Edit notes (optional)</label>
+        <input class="form-control mb-3" placeholder="Brief description of changes made…">
+        <button class="btn btn-brand"><i class="fas fa-code-branch me-1"></i> Save new version</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2><i class="fas fa-signature"></i> Signoff &amp; approval flow</h2></div>
+      <div class="p-3 p-lg-4">
+        <h6 style="font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);font-weight:600;">Digital signature recipients</h6>
+        <div class="recip">
+          <div class="ic"><i class="fas fa-user-nurse"></i></div>
+          <div><div class="t">Ger O'Keeffe <span class="text-muted">· Assessor</span></div><div class="s">ger.okeeffe@allwayswithyou.ie</div></div>
+          <span class="sbadge sb-green chk"><i class="fas fa-check"></i></span>
+        </div>
+        <div class="recip">
+          <div class="ic"><i class="fas fa-user"></i></div>
+          <div><div class="t">Mary Bracken <span class="text-muted">· Client/NOK</span></div><div class="s">mary.bracken@example.ie</div></div>
+          <span class="sbadge sb-green chk"><i class="fas fa-check"></i></span>
+        </div>
+
+        <h6 class="mt-4" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);font-weight:600;">Document status workflow</h6>
+        <div class="flow mt-3">
+          <div class="step done"><div class="node"><i class="fas fa-check"></i></div><div class="st-title">Draft created</div><div class="st-time">01/03/2026 · 10:14 · Ger O'Keeffe</div></div>
+          <div class="step done"><div class="node"><i class="fas fa-check"></i></div><div class="st-title">Sent for signature</div><div class="st-time">02/03/2026 · 09:00 · digital (PandaDoc)</div></div>
+          <div class="step done"><div class="node"><i class="fas fa-check"></i></div><div class="st-title">Assessor signed</div><div class="st-time">03/03/2026 · 11:15 · Ger O'Keeffe</div></div>
+          <div class="step current"><div class="node"><i class="fas fa-arrow-right"></i></div><div class="st-title">Awaiting client signature</div><div class="st-time">Started 03/03/2026 · reminder sent</div></div>
+          <div class="step pending"><div class="node">5</div><div class="st-title">Fully approved</div><div class="st-time">Pending</div></div>
+        </div>
+
+        <div class="mt-4 d-grid">
+          <button class="btn btn-brand"><i class="fas fa-paper-plane me-1"></i> Resend signature request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: SUPPORT DOCS ============ -->
+  <div class="tabpane" data-pane="support">
+    <div class="panel mt-3">
+      <div class="panel-head">
+        <h2><i class="fas fa-folder-open"></i> Support documents</h2>
+        <button class="btn btn-brand"><i class="fas fa-plus me-1"></i> New</button>
+      </div>
+      <div class="empty-state">
+        <i class="fas fa-folder"></i>
+        No support documents yet — use <b>New</b> to upload one.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: REASSESSMENT ============ -->
+  <div class="tabpane" data-pane="reassessment">
+    <div class="panel p-3 p-lg-4 mt-3">
+      <div class="section-title"><i class="fas fa-redo"></i> Client reassessment information</div>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Date of Reassessment</label><input type="date" class="form-control"></div>
+        <div class="col-md-4"><label class="form-label">Reason for Reassessment</label><select class="form-select"><option value="">Select Reason</option><option>Routine Review</option><option>Change in Condition</option><option>Family Request</option><option>Care Plan Adjustment</option><option>Medication Review</option><option>Incident Follow-up</option><option>Other</option></select></div>
+        <div class="col-md-4"><label class="form-label">Reassessment Priority</label><select class="form-select"><option value="">Select Priority</option><option>Low</option><option>Medium</option><option>High</option><option>Urgent</option></select></div>
+        <div class="col-md-4"><label class="form-label">Reassessing Staff Member</label><input class="form-control"></div>
+        <div class="col-md-4"><label class="form-label">Reassessment Status</label><select class="form-select"><option value="">Select Status</option><option>Scheduled</option><option>In Progress</option><option>Completed</option><option>Cancelled</option><option>Pending Approval</option></select></div>
+        <div class="col-md-4"><label class="form-label">Next Reassessment Due</label><input type="date" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">Reassessment Notes</label><textarea class="form-control" rows="3" placeholder="Notes or observations about the reassessment..."></textarea></div>
+        <div class="col-md-6"><label class="form-label">Recommended Care Plan Changes</label><textarea class="form-control" rows="3" placeholder="Describe any recommended changes to the care plan..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="panel mt-3">
+      <div class="panel-head">
+        <h2><i class="fas fa-folder-open"></i> Reassessment documents</h2>
+        <button class="btn btn-brand"><i class="fas fa-plus me-1"></i> New</button>
+      </div>
+      <div class="empty-state">
+        <i class="fas fa-folder"></i>
+        No reassessment documents yet — use <b>New</b> to upload one.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container-xxl">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou">
+        <p>Transforming Care Plan Management for Healthcare Excellence</p>
+      </div>
+      <div class="footer-col">
+        <h6>Legal</h6>
+        <div class="footer-links">
+          <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+          <a href="#"><i class="fas fa-file-contract"></i> Terms &amp; Conditions</a>
+          <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
+          <a href="#"><i class="fas fa-building"></i> Company Information</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>&copy; 2026 Allwayswithyou. All rights reserved.</span>
+      <span class="ver">Care Plan Manager <span class="chip">v2.4.1</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // tabs (supports arriving via #hash, e.g. client_profile_V3.html#careplan)
+  const tabs = document.querySelectorAll('#ctabs .ctab');
+  const panes = document.querySelectorAll('.tabpane');
+  function selectTab(name){
+    tabs.forEach(x=>x.classList.toggle('active', x.dataset.tab===name));
+    panes.forEach(p=>p.classList.toggle('show', p.dataset.pane===name));
+  }
+  tabs.forEach(t=>t.addEventListener('click', ()=>{
+    selectTab(t.dataset.tab);
+    history.replaceState(null,'','#'+t.dataset.tab);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }));
+  const initial = (location.hash||'').replace('#','');
+  if (initial && document.querySelector('.ctab[data-tab="'+initial+'"]')) selectTab(initial);
+
+  // Days/Hours pill toggles (now editable)
+  document.querySelectorAll('.pill').forEach(p=>{
+    const cb = p.querySelector('input');
+    p.addEventListener('click', e=>{ e.preventDefault(); cb.checked=!cb.checked; p.classList.toggle('on', cb.checked); });
+  });
+
+  // save feedback
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    const o=this.innerHTML; this.innerHTML='<i class="fas fa-check me-1"></i> Saved';
+    this.style.background='var(--brand-green-dark)';
+    setTimeout(()=>{this.innerHTML=o;this.style.background='';},1400);
+  });
+</script>
+</body>
+</html>

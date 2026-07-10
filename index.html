@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Plan Manager — V3.0.0 UI Preview</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --brand-green:#51BF9D; --brand-green-dark:#005D63; --grey:#666D89; --ink:#13384B; --line:#e6eaec; --page:#f4f6f7; --soft-green:rgba(81,191,157,.10); }
+  *{box-sizing:border-box;} body{ font-family:'Prompt',sans-serif; color:var(--ink); background:var(--page); margin:0; }
+  .top{ background:var(--ink); padding:1.4rem 0; }
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 1.5rem; }
+  .top .wrap{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .top img{ height:50px; }
+  .top .v{ margin-left:auto; background:rgba(81,191,157,.18); color:#7fd9c0; border-radius:20px; padding:.25rem .8rem; font-weight:700; font-size:.82rem; }
+  h1{ font-size:1.6rem; margin:2rem 0 .3rem; }
+  .lead{ color:var(--grey); margin:0 0 1.6rem; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; padding-bottom:3rem; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 2px rgba(19,56,75,.04); padding:1.1rem 1.2rem; text-decoration:none; color:var(--ink); display:flex; gap:.85rem; align-items:flex-start; transition:.15s; }
+  .card:hover{ border-color:var(--brand-green); box-shadow:0 6px 20px rgba(19,56,75,.08); transform:translateY(-1px); }
+  .card .ic{ width:42px; height:42px; border-radius:11px; background:var(--soft-green); color:var(--brand-green-dark); display:grid; place-items:center; font-size:1.1rem; flex:none; }
+  .card h3{ font-size:.98rem; margin:0 0 .15rem; }
+  .card p{ font-size:.82rem; color:var(--grey); margin:0; line-height:1.4; }
+  .sec{ font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--grey); font-weight:700; margin:1.6rem 0 .8rem; }
+  .note{ background:#fff; border:1px solid var(--line); border-left:4px solid var(--brand-green); border-radius:10px; padding:1rem 1.2rem; font-size:.88rem; color:var(--grey); margin-bottom:1rem; }
+  .note b{ color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><img src="assets/logos/ALWAYS_logo_horiz_RGB_NEG.svg" alt="Allwayswithyou"><span class="v">UI Preview · V3.0.1</span></div></div>
+<div class="wrap">
+  <h1>Care Plan Manager — V3 UI Preview</h1>
+  <p class="lead">Clickable design prototype for user testing. Sample data only — not connected to the live system.</p>
+  <div class="note"><b>For testers:</b> this is a visual prototype. You can click through the screens and try the interactions (search, filters, tabs, toggles), but nothing is saved and no real client data is shown. Start with <b>Care Plan Manager</b> or <b>Login</b>.</div>
+
+  <div class="sec">Entry &amp; core workflow</div>
+  <div class="grid">
+    <a class="card" href="login_V3.html"><div class="ic"><i class="fas fa-right-to-bracket"></i></div><div><h3>Login</h3><p>Split-screen sign-in with brand motif</p></div></a>
+    <a class="card" href="care_plan_search_V3.html"><div class="ic"><i class="fas fa-folder-open"></i></div><div><h3>Care Plan Manager</h3><p>Client search, filters &amp; document overview</p></div></a>
+    <a class="card" href="client_profile_V3.html"><div class="ic"><i class="fas fa-id-card"></i></div><div><h3>Client Profile</h3><p>Tabbed workspace — Profile, Intake, Assessments, Care Plan, Support Docs, Reassessment</p></div></a>
+    <a class="card" href="assessment_pages_V3.html"><div class="ic"><i class="fas fa-clipboard-check"></i></div><div><h3>Assessments</h3><p>SA / HA / RA send-for-assessment</p></div></a>
+    <a class="card" href="onboarding_V3.html"><div class="ic"><i class="fas fa-user-plus"></i></div><div><h3>Onboarding</h3><p>Add new client + care coordinator intake</p></div></a>
+    <a class="card" href="document_view_V3.html"><div class="ic"><i class="fas fa-folder"></i></div><div><h3>Documents</h3><p>Assessment &amp; support document lists</p></div></a>
+  </div>
+
+  <div class="sec">Reports, settings &amp; account</div>
+  <div class="grid">
+    <a class="card" href="report_pages_V3.html"><div class="ic"><i class="fas fa-chart-bar"></i></div><div><h3>Reports</h3><p>Care Plan Activity · Weekly · System Logs</p></div></a>
+    <a class="card" href="settings_V3.html"><div class="ic"><i class="fas fa-gear"></i></div><div><h3>Settings</h3><p>Users, branches, signature, templates, tenant</p></div></a>
+    <a class="card" href="user_profile_V3.html"><div class="ic"><i class="fas fa-id-badge"></i></div><div><h3>My Profile &amp; Access</h3><p>Role, privilege level &amp; assigned branches</p></div></a>
+    <a class="card" href="release_notes_V3.html"><div class="ic"><i class="fas fa-bullhorn"></i></div><div><h3>Release Notes</h3><p>Version history (L0 admin controls)</p></div></a>
+    <a class="card" href="admin_release_notes_V3.html"><div class="ic"><i class="fas fa-cog"></i></div><div><h3>Manage Release Notes</h3><p>Add / edit / publish (Super Admin)</p></div></a>
+    <a class="card" href="error_pages_V3.html"><div class="ic"><i class="fas fa-triangle-exclamation"></i></div><div><h3>Error Pages</h3><p>404 &amp; 500 branded states</p></div></a>
+  </div>
+</div>
+</body>
+</html>
