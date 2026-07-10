@@ -1,4 +1,4 @@
-# Care Plan Manager — V3.0.1 UI Preview
+# Care Plan Manager — V3.0.1 UI Preview.
 
 A clickable, front-end-only design prototype for **user testing**, ahead of the V3.0.0 production launch. Sample data only — not connected to any backend or real client data.
 
